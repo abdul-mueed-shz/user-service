@@ -41,6 +41,23 @@ public class OauthProperties {
 
         private GoogleRegistrationProperties google = new GoogleRegistrationProperties();
         private LinkedinRegistrationProperties linkedin = new LinkedinRegistrationProperties();
+        private XRegistrationProperties xFormerlyTwitter = new XRegistrationProperties();
+
+        @Data
+        public static class XRegistrationProperties {
+
+            private String clientId;
+            private String clientSecret;
+            private String scope;
+            private String redirectUri;
+            private String authorizationGrantType;
+            private String tokenGrantTypeParam;
+            private String accessToken;
+            private String bearerToken;
+            private String accessTokenSecret;
+            private String pkceCodeVerifier;
+            private String pkceCodeChallenge;
+        }
 
         @Data
         public static class GoogleRegistrationProperties {
