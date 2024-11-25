@@ -1,0 +1,67 @@
+package com.abdul.admin.config;
+
+import java.util.List;
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+
+@Data
+@Configuration
+@ConfigurationProperties(prefix = "spring.security.oauth2.client")
+public class OauthProperties {
+
+    private ProviderProperties provider = new ProviderProperties();
+    private RegistrationProperties registration = new RegistrationProperties();
+
+    @Data
+    public static class ProviderProperties {
+
+        private GoogleProviderProperties google = new GoogleProviderProperties();
+        private LinkedinProviderProperties linkedin = new LinkedinProviderProperties();
+
+        @Data
+        public static class GoogleProviderProperties {
+
+            private String authorizationUri;
+            private String tokenUri;
+            private String userInfoUri;
+        }
+
+        @Data
+        public static class LinkedinProviderProperties {
+
+            private String authorizationUri;
+            private String tokenUri;
+            private String userInfoUri;
+        }
+    }
+
+    @Data
+    public static class RegistrationProperties {
+
+        private GoogleRegistrationProperties google = new GoogleRegistrationProperties();
+        private LinkedinRegistrationProperties linkedin = new LinkedinRegistrationProperties();
+
+        @Data
+        public static class GoogleRegistrationProperties {
+
+            private String clientId;
+            private String clientSecret;
+            private List<String> scope;
+            private String redirectUri;
+            private String accessType;
+            private String authorizationGrantType;
+        }
+
+        @Data
+        public static class LinkedinRegistrationProperties {
+
+            private String clientId;
+            private String clientSecret;
+            private List<String> scope;
+            private String redirectUri;
+            private String authorizationGrantType;
+            private String tokenGrantTypeParam;
+        }
+    }
+}
