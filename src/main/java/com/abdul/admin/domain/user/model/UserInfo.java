@@ -3,6 +3,7 @@ package com.abdul.admin.domain.user.model;
 import com.abdul.admin.adapter.out.persistence.entity.Role;
 import com.abdul.admin.domain.google.model.GoogleUserInfo;
 import com.abdul.admin.domain.linkedin.model.LinkedinUserInfo;
+import com.abdul.admin.domain.twitter.model.TwitterUserInfo;
 import java.time.LocalDateTime;
 import java.util.Set;
 import lombok.AllArgsConstructor;
@@ -32,5 +33,5 @@ public class UserInfo {
     private Boolean emailVerified = Boolean.FALSE;
     private GoogleUserInfo googleUser;
     private LinkedinUserInfo linkedinUser;
-
+    private TwitterUserInfo twitterUser;
 }

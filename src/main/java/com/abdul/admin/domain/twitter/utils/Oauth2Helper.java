@@ -21,12 +21,12 @@ public class Oauth2Helper {
     public TwitterOAuth20Service getXOAuthServiceInstance() {
         return getXOAuth20Service(
                 getXCredentialsOAuth2(
-                        oauthProperties.getRegistration().getXFormerlyTwitter().getClientId(),
-                        oauthProperties.getRegistration().getXFormerlyTwitter().getClientSecret(),
-                        oauthProperties.getRegistration().getXFormerlyTwitter().getAccessToken()
+                        oauthProperties.getRegistration().getX().getClientId(),
+                        oauthProperties.getRegistration().getX().getClientSecret(),
+                        oauthProperties.getRegistration().getX().getAccessToken()
                 ),
-                oauthProperties.getRegistration().getXFormerlyTwitter().getRedirectUri(),
-                oauthProperties.getRegistration().getXFormerlyTwitter().getScope()
+                oauthProperties.getRegistration().getX().getRedirectUri(),
+                oauthProperties.getRegistration().getX().getScope()
         );
     }
 

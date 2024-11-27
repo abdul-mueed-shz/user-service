@@ -41,7 +41,7 @@ public class OauthProperties {
 
         private GoogleRegistrationProperties google = new GoogleRegistrationProperties();
         private LinkedinRegistrationProperties linkedin = new LinkedinRegistrationProperties();
-        private XRegistrationProperties xFormerlyTwitter = new XRegistrationProperties();
+        private XRegistrationProperties x = new XRegistrationProperties();
 
         @Data
         public static class XRegistrationProperties {

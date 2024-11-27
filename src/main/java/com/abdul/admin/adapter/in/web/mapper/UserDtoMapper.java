@@ -4,6 +4,8 @@ package com.abdul.admin.adapter.in.web.mapper;
 import com.abdul.admin.domain.google.model.GoogleUserResponse;
 import com.abdul.admin.domain.linkedin.model.AccessToken;
 import com.abdul.admin.domain.linkedin.model.LinkedinUserResponse;
+import com.abdul.admin.domain.twitter.model.TwitterAccessTokenResponse;
+import com.abdul.admin.domain.twitter.model.TwitterUserResponse;
 import com.abdul.admin.domain.user.model.UserInfo;
 import com.abdul.admin.domain.user.model.UserRegistrationRequestInfo;
 import com.abdul.admin.dto.RegisterUserRequest;
@@ -21,6 +23,22 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
  */
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface UserDtoMapper {
+
+    @Mapping(source = "state", target = "twitterUser.state")
+    @Mapping(source = "authCode", target = "twitterUser.usedAuthCode")
+    @Mapping(source = "twitterAccessTokenResponse.accessToken", target = "twitterUser.accessToken")
+    @Mapping(source = "twitterAccessTokenResponse.expiresIn", target = "twitterUser.expiresIn")
+    @Mapping(source = "twitterAccessTokenResponse.scope", target = "twitterUser.tokenScope")
+    @Mapping(source = "twitterAccessTokenResponse.tokenType", target = "twitterUser.tokenType")
+    @Mapping(source = "twitterAccessTokenResponse.refreshToken", target = "twitterUser.refreshToken")
+    @Mapping(source = "twitterUserResponse.profileImageUrl", target = "twitterUser.picture")
+    @Mapping(source = "twitterUserResponse.name", target = "firstName")
+    @Mapping(source = "twitterUserResponse.username", target = "username")
+    UserRegistrationRequestInfo map(
+            TwitterUserResponse twitterUserResponse,
+            TwitterAccessTokenResponse twitterAccessTokenResponse,
+            String state,
+            String authCode);
 
     @Mapping(source = "state", target = "linkedinUser.state")
     @Mapping(source = "authCode", target = "linkedinUser.usedAuthCode")

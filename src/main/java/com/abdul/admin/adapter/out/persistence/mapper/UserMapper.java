@@ -20,6 +20,8 @@ public interface UserMapper {
 
     User mapRegistrationInfoToUser(UserRegistrationRequestInfo userRegistrationRequestInfo);
 
+    User mapUpdateUserInfo(UserInfo userInfo);
+
     UserInfo map(User user);
 
     @AfterMapping

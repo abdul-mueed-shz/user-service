@@ -3,6 +3,7 @@ package com.abdul.admin.domain.linkedin.usecase;
 import com.abdul.admin.config.OauthProperties;
 import com.abdul.admin.domain.linkedin.model.LinkedinOauthLoginRequest;
 import com.abdul.admin.domain.linkedin.port.in.LinkedInOAuthUseCase;
+import com.abdul.admin.domain.twitter.utils.Oauth2Helper;
 import com.abdul.admin.domain.user.port.out.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import java.util.Objects;
@@ -20,6 +21,7 @@ public class LinkedInOAuthUseCaseImpl implements LinkedInOAuthUseCase {
 
     private final UserRepository userRepository;
     private final OauthProperties oauthProperties;
+    private final Oauth2Helper oauth2Helper;
 
     private final Random random = new Random();
 
@@ -33,15 +35,14 @@ public class LinkedInOAuthUseCaseImpl implements LinkedInOAuthUseCase {
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         String scopes = String.join("+", oauthProperties.getRegistration().getLinkedin().getScope());
 
-        final String userSecretSessionState = "secret_" + linkedinOauthLoginRequest.getSearchTerm();
-
         return UriComponentsBuilder.fromUriString(oauthProperties.getProvider().getLinkedin().getAuthorizationUri())
                 .queryParam("response_type",
                         oauthProperties.getRegistration().getLinkedin().getAuthorizationGrantType())
                 .queryParam("client_id", oauthProperties.getRegistration().getLinkedin().getClientId())
                 .queryParam("redirect_uri",
                         oauthProperties.getRegistration().getLinkedin().getRedirectUri().replace("{baseUrl}", baseUrl))
-                .queryParam("state", userSecretSessionState).queryParam("scope", scopes).encode()
+                .queryParam("state", oauth2Helper.getSecretState(linkedinOauthLoginRequest.getSearchTerm()))
+                .queryParam("scope", scopes).encode()
                 .toUriString();
     }
 }

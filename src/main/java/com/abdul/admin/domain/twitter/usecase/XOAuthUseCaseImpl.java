@@ -28,8 +28,8 @@ public class XOAuthUseCaseImpl implements XOAuthUseCase {
         try (TwitterOAuth20Service xoAuth20Service = oauth2Helper.getXOAuthServiceInstance()) {
             return xoAuth20Service.getAuthorizationUrl(
                     oauth2Helper.getProofKeyForCodeExchange(
-                            oauthProperties.getRegistration().getXFormerlyTwitter().getPkceCodeChallenge(),
-                            oauthProperties.getRegistration().getXFormerlyTwitter().getPkceCodeVerifier()),
+                            oauthProperties.getRegistration().getX().getPkceCodeChallenge(),
+                            oauthProperties.getRegistration().getX().getPkceCodeVerifier()),
                     oauth2Helper.getSecretState(xOauthLoginRequest.getSearchTerm())
             );
         }

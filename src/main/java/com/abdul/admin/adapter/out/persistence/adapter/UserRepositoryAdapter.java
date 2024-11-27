@@ -24,6 +24,13 @@ public class UserRepositoryAdapter implements UserRepository {
         return userMapper.map(user);
     }
 
+
+    @Override
+    public UserInfo updateUser(UserInfo userInfo) {
+        User user = userJpaRepository.save(userMapper.mapUpdateUserInfo(userInfo));
+        return userMapper.map(user);
+    }
+
     @Override
     public List<UserInfo> findAll() {
         return userMapper.map(userJpaRepository.findAll());
@@ -40,4 +47,11 @@ public class UserRepositoryAdapter implements UserRepository {
         Optional<User> userOptional = userJpaRepository.findUserByLinkedinUser_State(state);
         return userOptional.map(userMapper::map).orElse(null);
     }
+
+    @Override
+    public UserInfo findByUserTwitterState(String state) {
+        Optional<User> userOptional = userJpaRepository.findUserByTwitterUser_State(state);
+        return userOptional.map(userMapper::map).orElse(null);
+    }
+
 }

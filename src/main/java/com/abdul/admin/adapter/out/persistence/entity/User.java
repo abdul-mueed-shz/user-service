@@ -57,7 +57,7 @@ public class User implements UserDetails, Serializable {
     @Column(unique = true, nullable = false)
     private String username;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String email;
 
     @Column
@@ -78,6 +78,10 @@ public class User implements UserDetails, Serializable {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "linkedin_user_id", referencedColumnName = "id")
     private LinkedinUser linkedinUser;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "twitter_user_id", referencedColumnName = "id")
+    private TwitterUser twitterUser;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)

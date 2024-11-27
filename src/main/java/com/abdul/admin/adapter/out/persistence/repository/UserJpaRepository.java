@@ -13,4 +13,6 @@ public interface UserJpaRepository extends JpaRepository<User, Long> {
     Optional<User> findUserByUsernameOrEmail(String searchTerm);
 
     Optional<User> findUserByLinkedinUser_State(String state);
+
+    Optional<User> findUserByTwitterUser_State(String state);
 }

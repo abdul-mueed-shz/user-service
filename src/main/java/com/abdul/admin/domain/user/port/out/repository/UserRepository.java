@@ -8,9 +8,13 @@ public interface UserRepository {
 
     UserInfo save(UserRegistrationRequestInfo sampleInfo);
 
+    UserInfo updateUser(UserInfo userInfo);
+
     List<UserInfo> findAll();
 
     UserInfo findBySearchTerm(String searchTerm); // Username or Email for now
 
     UserInfo findByUserLinkedinState(String state);
+
+    UserInfo findByUserTwitterState(String state);
 }
