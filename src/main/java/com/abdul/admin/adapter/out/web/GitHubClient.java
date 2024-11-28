@@ -39,15 +39,6 @@ public class GitHubClient {
 
     }
 
-    public String getUserEmails(String accessToken) throws WebClientResponseException {
-        return webClient.get()
-                .uri(oauthProperties.getProvider().getGithub().getEmailsUri())
-                .headers(headers -> headers.setBearerAuth(accessToken))
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
-    }
-
     public AccessToken fetchAccessToken(String code) throws WebClientResponseException {
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         formData.add("client_id", oauthProperties.getRegistration().getGithub().getClientId());
