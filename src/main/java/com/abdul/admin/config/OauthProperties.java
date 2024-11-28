@@ -18,6 +18,16 @@ public class OauthProperties {
 
         private GoogleProviderProperties google = new GoogleProviderProperties();
         private LinkedinProviderProperties linkedin = new LinkedinProviderProperties();
+        private GithubProviderProperties github = new GithubProviderProperties();
+
+        @Data
+        public static class GithubProviderProperties {
+
+            private String authorizationUri;
+            private String tokenUri;
+            private String userInfoUri;
+            private String emailsUri;
+        }
 
         @Data
         public static class GoogleProviderProperties {
@@ -42,6 +52,18 @@ public class OauthProperties {
         private GoogleRegistrationProperties google = new GoogleRegistrationProperties();
         private LinkedinRegistrationProperties linkedin = new LinkedinRegistrationProperties();
         private XRegistrationProperties x = new XRegistrationProperties();
+        private GithubRegistrationProperties github = new GithubRegistrationProperties();
+
+        @Data
+        public static class GithubRegistrationProperties {
+
+            private String clientId;
+            private String clientSecret;
+            private List<String> scope;
+            private String redirectUri;
+            private String authorizationGrantType;
+            private String tokenGrantTypeParam;
+        }
 
         @Data
         public static class XRegistrationProperties {

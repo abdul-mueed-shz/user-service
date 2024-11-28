@@ -23,7 +23,22 @@ spring:
             authorization-uri: https://www.linkedin.com/oauth/v2/authorization
             token-uri: https://www.linkedin.com/oauth/v2/accessToken
             user-info-uri: https://api.linkedin.com/v2/userinfo
+          github:
+            authorization-uri: https://github.com/login/oauth/authorize
+            token-uri: https://github.com/login/oauth/access_token
+            user-info-uri: https://api.github.com/user
+            emails-uri: https://api.github.com/user/emails
         registration:
+          github:
+            client-name: ${OAUTH2.GITHUB.CLIENT_NAME}
+            redirect-uri: ${OAUTH2.GITHUB.REDIRECT_URI}
+            authorization-grant-type: code
+            token-grant-type-param: authorization_code
+            client-id: ${OAUTH2.GITHUB.CLIENT_ID}
+            client-secret: ${OAUTH2.GITHUB.CLIENT_SECRET}
+            scope:
+              - read:user
+              - user:email
           x:
             pkce-code-challenge: ${OAUTH2.TWITTER.PKCE.CODE.CHALLENGE}
             pkce-code-verifier: ${OAUTH2.TWITTER.PKCE.CODE.VERIFIER}

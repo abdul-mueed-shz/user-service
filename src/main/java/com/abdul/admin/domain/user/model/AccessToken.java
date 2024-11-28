@@ -1,4 +1,4 @@
-package com.abdul.admin.domain.linkedin.model;
+package com.abdul.admin.domain.user.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

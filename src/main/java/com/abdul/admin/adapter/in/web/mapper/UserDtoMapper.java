@@ -2,10 +2,10 @@ package com.abdul.admin.adapter.in.web.mapper;
 
 
 import com.abdul.admin.domain.google.model.GoogleUserResponse;
-import com.abdul.admin.domain.linkedin.model.AccessToken;
 import com.abdul.admin.domain.linkedin.model.LinkedinUserResponse;
 import com.abdul.admin.domain.twitter.model.TwitterAccessTokenResponse;
 import com.abdul.admin.domain.twitter.model.TwitterUserResponse;
+import com.abdul.admin.domain.user.model.AccessToken;
 import com.abdul.admin.domain.user.model.UserInfo;
 import com.abdul.admin.domain.user.model.UserRegistrationRequestInfo;
 import com.abdul.admin.dto.RegisterUserRequest;

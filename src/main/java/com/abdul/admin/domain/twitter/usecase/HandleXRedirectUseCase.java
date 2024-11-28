@@ -20,7 +20,6 @@ import com.twitter.clientlib.TwitterCredentialsOAuth2;
 import com.twitter.clientlib.api.TwitterApi;
 import com.twitter.clientlib.auth.TwitterOAuth20Service;
 import com.twitter.clientlib.model.Get2UsersMeResponse;
-import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -31,7 +30,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.springframework.stereotype.Service;
 
-@Service("twitter")
+@Service("twitterRedirect")
 @RequiredArgsConstructor
 public class HandleXRedirectUseCase extends AbstractUserOauthUseCase {
 
@@ -44,19 +43,7 @@ public class HandleXRedirectUseCase extends AbstractUserOauthUseCase {
     private final RegisterUserUseCase registerUserUseCase;
     private final GetUserDetailUseCase getUserDetailUseCase;
     private final UpdateUserUseCase updateUserUseCase;
-
-    @Transactional
-    @Override
-    public String execute(String code, String state)
-            throws IOException, ExecutionException, InterruptedException, ApiException {
-        UserInfo userInfo = getUserByState(state);
-        if (Objects.nonNull(userInfo)) {
-            executeTokenValidationFlow(code, state, userInfo);
-        } else {
-            executeAuthCodeFlow(code, state);
-        }
-        return "Return System Token.";
-    }
+    private final TwitterOAuth20Service twitterOAuth20Service;
 
     @Override
     protected void executeTokenValidationFlow(String currentCode, String currentState, UserInfo userInfo)
@@ -69,27 +56,18 @@ public class HandleXRedirectUseCase extends AbstractUserOauthUseCase {
             twitterUserResponse = fetchTwitterUser(userInfo.getTwitterUser().getAccessToken(),
                     userInfo.getTwitterUser().getRefreshToken());
         } else {
-            try (TwitterOAuth20Service twitterOAuth20Service = oauth2Helper.getXOAuthServiceInstance()) {
-                ImmutableTriple<TwitterAccessTokenResponse, TwitterUserResponse, Boolean> tokenAndUserInfoTuple =
-                        refreshAndPersistTwitterUserInfo(
-                                twitterOAuth20Service,
-                                userInfo,
-                                currentCode);
-                twitterAccessTokenResponse = tokenAndUserInfoTuple.getLeft();
-                twitterUserResponse = tokenAndUserInfoTuple.getMiddle();
-                boolean isAuthCodeUsed = tokenAndUserInfoTuple.getRight();
-                if (isAuthCodeUsed) {
-                    authCode = currentCode;
-                    state = currentState;
-                }
+            ImmutableTriple<TwitterAccessTokenResponse, TwitterUserResponse, Boolean> tokenAndUserInfoTuple = refreshAndPersistTwitterUserInfo(
+                    userInfo, currentCode);
+            twitterAccessTokenResponse = tokenAndUserInfoTuple.getLeft();
+            twitterUserResponse = tokenAndUserInfoTuple.getMiddle();
+            boolean isAuthCodeUsed = tokenAndUserInfoTuple.getRight();
+            if (isAuthCodeUsed) {
+                authCode = currentCode;
+                state = currentState;
             }
         }
-        UserInfo updatedUserInfo = userInfoMapper.map(
-                userInfo,
-                twitterAccessTokenResponse,
-                twitterUserResponse,
-                authCode,
-                state);
+        UserInfo updatedUserInfo = userInfoMapper.map(userInfo, twitterAccessTokenResponse, twitterUserResponse,
+                authCode, state);
         updateUserUseCase.execute(updatedUserInfo);
     }
 
@@ -102,8 +80,7 @@ public class HandleXRedirectUseCase extends AbstractUserOauthUseCase {
         UserInfo userInfo = getUserDetailUseCase.get(twitterUserResponse.getUsername());
         if (Objects.nonNull(userInfo)) {
             updateUserUseCase.execute(
-                    userInfoMapper.map(userInfo, twitterAccessTokenResponse, twitterUserResponse, code, state)
-            );
+                    userInfoMapper.map(userInfo, twitterAccessTokenResponse, twitterUserResponse, code, state));
             return;
         }
         UserRegistrationRequestInfo userRegistrationRequestInfo = userDtoMapper.map(twitterUserResponse,
@@ -132,19 +109,14 @@ public class HandleXRedirectUseCase extends AbstractUserOauthUseCase {
     // Move this to abstract class as well.
     private TwitterAccessTokenResponse getAccessTokenByAuthCode(String code)
             throws IOException, ExecutionException, InterruptedException {
-        try (TwitterOAuth20Service twitterOAuth20Service = oauth2Helper.getXOAuthServiceInstance()) {
-            OAuth2AccessToken oAuth2AccessToken = twitterOAuth20Service.getAccessToken(
-                    oauth2Helper.getProofKeyForCodeExchange(
-                            oauthProperties.getRegistration().getX().getPkceCodeChallenge(),
-                            oauthProperties.getRegistration().getX().getPkceCodeVerifier()),
-                    code);
-            return twitterInfoMapper.map(oAuth2AccessToken);
-        }
+        OAuth2AccessToken oAuth2AccessToken = twitterOAuth20Service.getAccessToken(
+                oauth2Helper.getProofKeyForCodeExchange(oauthProperties.getRegistration().getX().getPkceCodeChallenge(),
+                        oauthProperties.getRegistration().getX().getPkceCodeVerifier()), code);
+        return twitterInfoMapper.map(oAuth2AccessToken);
     }
 
     private ImmutableTriple<TwitterAccessTokenResponse, TwitterUserResponse, Boolean> refreshAndPersistTwitterUserInfo(
-            TwitterOAuth20Service twitterOAuth20Service, UserInfo userInfo, String code)
-            throws ApiException, IOException, ExecutionException, InterruptedException {
+            UserInfo userInfo, String code) throws ApiException, IOException, ExecutionException, InterruptedException {
         TwitterAccessTokenResponse twitterAccessTokenResponse;
         boolean isAuthCodeUsed = false;
         OAuth2AccessToken oAuth2AccessToken = twitterOAuth20Service.refreshAccessToken(

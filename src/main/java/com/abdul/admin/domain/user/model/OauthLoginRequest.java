@@ -1,4 +1,4 @@
-package com.abdul.admin.domain.google.model;
+package com.abdul.admin.domain.user.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class GoogleOauthLoginRequest {
+public class OauthLoginRequest {
 
     private String searchTerm; // username or email
 }

@@ -1,17 +1,16 @@
-package com.abdul.admin.domain.twitter.model;
+package com.abdul.admin.domain.github.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
 @Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class XOauthRedirectInfo {
+public class GithubOAuthRedirectInfo {
 
-    String code;
-
-    String state;
+    private String code;
+    private String state;
 }

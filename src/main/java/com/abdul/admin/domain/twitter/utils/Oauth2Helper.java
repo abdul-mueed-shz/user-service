@@ -1,45 +1,34 @@
 package com.abdul.admin.domain.twitter.utils;
 
-import com.abdul.admin.config.OauthProperties;
 import com.github.scribejava.core.pkce.PKCE;
 import com.github.scribejava.core.pkce.PKCECodeChallengeMethod;
-import com.twitter.clientlib.TwitterCredentialsOAuth2;
-import com.twitter.clientlib.auth.TwitterOAuth20Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 @RequiredArgsConstructor
 public class Oauth2Helper {
 
-    private final OauthProperties oauthProperties;
-
     public String getSecretState(String statePostFix) {
         return "secret_" + statePostFix;
     }
 
-    public TwitterOAuth20Service getXOAuthServiceInstance() {
-        return getXOAuth20Service(
-                getXCredentialsOAuth2(
-                        oauthProperties.getRegistration().getX().getClientId(),
-                        oauthProperties.getRegistration().getX().getClientSecret(),
-                        oauthProperties.getRegistration().getX().getAccessToken()
-                ),
-                oauthProperties.getRegistration().getX().getRedirectUri(),
-                oauthProperties.getRegistration().getX().getScope()
-        );
-    }
-
-    public TwitterOAuth20Service getXOAuth20Service(
-            TwitterCredentialsOAuth2 xCredentialsOAuth2,
+    public String getUrl(
+            String appBaseUrl,
+            String authUrl,
+            String grantType,
+            String clientId,
             String redirectUri,
-            String scopes) {
-        return new TwitterOAuth20Service(
-                xCredentialsOAuth2.getTwitterOauth2ClientId(),
-                xCredentialsOAuth2.getTwitterOAuth2ClientSecret(),
-                redirectUri,
-                scopes.replace(",", " ")
-        );
+            String scopes,
+            String searchTerm) {
+        return UriComponentsBuilder.fromUriString(authUrl)
+                .queryParam("response_type", grantType)
+                .queryParam("client_id", clientId)
+                .queryParam("redirect_uri", redirectUri.replace("{baseUrl}", appBaseUrl))
+                .queryParam("state", getSecretState(searchTerm))
+                .queryParam("scope", scopes).encode()
+                .toUriString();
     }
 
     public PKCE getProofKeyForCodeExchange(String codeChallenge, String codeVerifier) {
@@ -48,9 +37,5 @@ public class Oauth2Helper {
         pkce.setCodeChallengeMethod(PKCECodeChallengeMethod.PLAIN);
         pkce.setCodeVerifier(codeVerifier);
         return pkce;
-    }
-
-    public TwitterCredentialsOAuth2 getXCredentialsOAuth2(String clientId, String clientSecret, String accessToken) {
-        return new TwitterCredentialsOAuth2(clientId, clientSecret, accessToken, "");
     }
 }

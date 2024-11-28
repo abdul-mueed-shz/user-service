@@ -1,6 +1,6 @@
 package com.abdul.admin.adapter.out.web;
 
-import com.abdul.admin.domain.linkedin.model.AccessToken;
+import com.abdul.admin.domain.user.model.AccessToken;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;

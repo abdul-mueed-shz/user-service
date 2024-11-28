@@ -42,26 +42,36 @@ public class HandleGoogleOAuthRedirectUseCaseImpl implements HandleGoogleOAuthRe
     @Override
     public String execute(GoogleOauthRedirectInfo googleOauthRedirectInfo) throws IOException {
         Credential credential = authorizationCodeFlow.loadCredential(googleOauthRedirectInfo.getAuthuser());
-        UserInfo userInfo = userRepository.findByGoogleAuthUser(googleOauthRedirectInfo.getAuthuser());
+        UserInfo userInfo = getUserByState(googleOauthRedirectInfo.getAuthuser());
         if (Objects.nonNull(credential) && Objects.nonNull(userInfo)) {
-            executeAccessTokenFlow(userInfo, credential, googleOauthRedirectInfo.getCode(),
+            executeTokenValidationFlow(
+                    userInfo,
+                    credential,
+                    googleOauthRedirectInfo.getCode(),
                     googleOauthRedirectInfo.getAuthuser());
         } else {
-            executeAuthorizationCodeFlow(googleOauthRedirectInfo.getCode(), googleOauthRedirectInfo.getAuthuser());
+            executeAuthCodeFlow(googleOauthRedirectInfo.getCode(), googleOauthRedirectInfo.getAuthuser());
         }
         return UriComponentsBuilder.fromHttpUrl(clientAppHomeUrl).queryParam("token", "System Generated Token")
                 .toUriString();
     }
 
-    private void executeAccessTokenFlow(UserInfo userInfo, Credential credential, String code, String authUser)
-            throws IOException {
-        if (isAccessTokenValid(userInfo, credential) || credential.refreshToken()) {
-            return;
-        }
-        executeAuthorizationCodeFlow(code, authUser);
+    protected UserInfo getUserByState(String authUser) {
+        // In GOOGLE's case it's auth user
+        return userRepository.findByGoogleAuthUser(authUser);
     }
 
-    private void executeAuthorizationCodeFlow(String code, String authUser) throws IOException {
+    private void executeTokenValidationFlow(UserInfo userInfo, Credential credential, String code, String authUser)
+            throws IOException {
+        if (isAccessTokenValid(userInfo.getGoogleUser().getCreatedAt(),
+                String.valueOf(credential.getExpiresInSeconds()))
+                || credential.refreshToken()) {
+            return;
+        }
+        executeAuthCodeFlow(code, authUser);
+    }
+
+    private void executeAuthCodeFlow(String code, String authUser) throws IOException {
         AuthorizationCodeTokenRequest tokenRequest = authorizationCodeFlow.newTokenRequest(code)
                 .setRedirectUri(getGoogleOAuthRedirectUriUseCase.execute());
         TokenResponse tokenResponse = tokenRequest.execute();
@@ -75,9 +85,8 @@ public class HandleGoogleOAuthRedirectUseCaseImpl implements HandleGoogleOAuthRe
         registerUserUseCase.execute(userDtoMapper.map(googleUserResponse, authUser));
     }
 
-    protected boolean isAccessTokenValid(UserInfo userInfo, Credential credential) {
-        LocalDateTime tokenExpiryDateTime = userInfo.getGoogleUser().getCreatedAt()
-                .plusSeconds(credential.getExpiresInSeconds());
+    protected boolean isAccessTokenValid(LocalDateTime createdAt, String expiresInSeconds) {
+        LocalDateTime tokenExpiryDateTime = createdAt.plusSeconds(Long.parseLong(expiresInSeconds));
         return !LocalDateTime.now().isAfter(tokenExpiryDateTime);
     }
 }

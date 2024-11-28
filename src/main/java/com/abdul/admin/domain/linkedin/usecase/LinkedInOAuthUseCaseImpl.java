@@ -1,48 +1,40 @@
 package com.abdul.admin.domain.linkedin.usecase;
 
 import com.abdul.admin.config.OauthProperties;
-import com.abdul.admin.domain.linkedin.model.LinkedinOauthLoginRequest;
-import com.abdul.admin.domain.linkedin.port.in.LinkedInOAuthUseCase;
 import com.abdul.admin.domain.twitter.utils.Oauth2Helper;
+import com.abdul.admin.domain.user.model.OauthLoginRequest;
 import com.abdul.admin.domain.user.port.out.repository.UserRepository;
+import com.abdul.admin.domain.user.usecase.AbstractGetOAuthUrlUseCase;
 import jakarta.transaction.Transactional;
-import java.util.Objects;
-import java.util.Random;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.util.UriComponentsBuilder;
 
 @Getter
-@Service
-@RequiredArgsConstructor
-public class LinkedInOAuthUseCaseImpl implements LinkedInOAuthUseCase {
+@Service("linkedin")
+public class LinkedInOAuthUseCaseImpl extends AbstractGetOAuthUrlUseCase {
 
-    private final UserRepository userRepository;
     private final OauthProperties oauthProperties;
     private final Oauth2Helper oauth2Helper;
 
-    private final Random random = new Random();
+    public LinkedInOAuthUseCaseImpl(UserRepository userRepository, ApplicationContext applicationContext,
+            OauthProperties oauthProperties, Oauth2Helper oauth2Helper) {
+        super(userRepository, applicationContext);
+        this.oauth2Helper = oauth2Helper;
+        this.oauthProperties = oauthProperties;
+    }
 
     @Transactional
-    public String execute(LinkedinOauthLoginRequest linkedinOauthLoginRequest) {
-        if (Objects.nonNull(userRepository.findByUsernameOrEmail(linkedinOauthLoginRequest.getSearchTerm()))) {
-            // throw Error. user is already registered in the system. login with email/username
-            return null;
-        }
-
+    @Override
+    public String getOauthAuthorizationUrl(OauthLoginRequest oauthLoginRequest) {
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         String scopes = String.join("+", oauthProperties.getRegistration().getLinkedin().getScope());
 
-        return UriComponentsBuilder.fromUriString(oauthProperties.getProvider().getLinkedin().getAuthorizationUri())
-                .queryParam("response_type",
-                        oauthProperties.getRegistration().getLinkedin().getAuthorizationGrantType())
-                .queryParam("client_id", oauthProperties.getRegistration().getLinkedin().getClientId())
-                .queryParam("redirect_uri",
-                        oauthProperties.getRegistration().getLinkedin().getRedirectUri().replace("{baseUrl}", baseUrl))
-                .queryParam("state", oauth2Helper.getSecretState(linkedinOauthLoginRequest.getSearchTerm()))
-                .queryParam("scope", scopes).encode()
-                .toUriString();
+        return oauth2Helper.getUrl(baseUrl, oauthProperties.getProvider().getGithub().getAuthorizationUri(),
+                oauthProperties.getRegistration().getGithub().getAuthorizationGrantType(),
+                oauthProperties.getRegistration().getGithub().getClientId(),
+                oauthProperties.getRegistration().getGithub().getRedirectUri(), oauthLoginRequest.getSearchTerm(),
+                scopes);
     }
 }

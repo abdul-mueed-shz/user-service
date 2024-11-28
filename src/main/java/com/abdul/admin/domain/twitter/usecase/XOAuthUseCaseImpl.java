@@ -1,37 +1,42 @@
 package com.abdul.admin.domain.twitter.usecase;
 
 import com.abdul.admin.config.OauthProperties;
-import com.abdul.admin.domain.twitter.model.XOauthLoginRequest;
-import com.abdul.admin.domain.twitter.port.in.XOAuthUseCase;
 import com.abdul.admin.domain.twitter.utils.Oauth2Helper;
+import com.abdul.admin.domain.user.model.OauthLoginRequest;
 import com.abdul.admin.domain.user.port.out.repository.UserRepository;
+import com.abdul.admin.domain.user.usecase.AbstractGetOAuthUrlUseCase;
 import com.twitter.clientlib.auth.TwitterOAuth20Service;
 import java.io.IOException;
-import java.util.Objects;
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
-@Service
-@RequiredArgsConstructor
-public class XOAuthUseCaseImpl implements XOAuthUseCase {
+@Service("twitter")
+public class XOAuthUseCaseImpl extends AbstractGetOAuthUrlUseCase {
 
-    private final UserRepository userRepository;
     private final OauthProperties oauthProperties;
     private final Oauth2Helper oauth2Helper;
+    private final TwitterOAuth20Service twitterOAuth20Service;
+
+    public XOAuthUseCaseImpl(
+            UserRepository userRepository,
+            ApplicationContext applicationContext,
+            TwitterOAuth20Service twitterOAuth20Service,
+            OauthProperties oauthProperties,
+            Oauth2Helper oauth2Helper
+    ) {
+        super(userRepository, applicationContext);
+        this.oauthProperties = oauthProperties;
+        this.oauth2Helper = oauth2Helper;
+        this.twitterOAuth20Service = twitterOAuth20Service;
+    }
 
     @Override
-    public String getRedirectUri(XOauthLoginRequest xOauthLoginRequest) throws IOException {
-        if (Objects.nonNull(userRepository.findByUsernameOrEmail(xOauthLoginRequest.getSearchTerm()))) {
-            // throw Error. user is already registered in the system. login with email/username
-            return null;
-        }
-        try (TwitterOAuth20Service xoAuth20Service = oauth2Helper.getXOAuthServiceInstance()) {
-            return xoAuth20Service.getAuthorizationUrl(
-                    oauth2Helper.getProofKeyForCodeExchange(
-                            oauthProperties.getRegistration().getX().getPkceCodeChallenge(),
-                            oauthProperties.getRegistration().getX().getPkceCodeVerifier()),
-                    oauth2Helper.getSecretState(xOauthLoginRequest.getSearchTerm())
-            );
-        }
+    public String getOauthAuthorizationUrl(OauthLoginRequest oauthLoginRequest) throws IOException {
+        return twitterOAuth20Service.getAuthorizationUrl(
+                oauth2Helper.getProofKeyForCodeExchange(
+                        oauthProperties.getRegistration().getX().getPkceCodeChallenge(),
+                        oauthProperties.getRegistration().getX().getPkceCodeVerifier()),
+                oauth2Helper.getSecretState(oauthLoginRequest.getSearchTerm())
+        );
     }
 }
