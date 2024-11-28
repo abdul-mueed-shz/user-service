@@ -5,7 +5,7 @@ import com.abdul.admin.domain.enums.UserMessageCodeEnum;
 import com.abdul.admin.domain.google.model.GoogleOauthLoginRequest;
 import com.abdul.admin.domain.google.model.GoogleOauthRedirectInfo;
 import com.abdul.admin.domain.google.port.in.GetGoogleAuthUrlUseCase;
-import com.abdul.admin.domain.google.port.in.HandleOAuthRedirectUseCase;
+import com.abdul.admin.domain.google.port.in.HandleGoogleOAuthRedirectUseCase;
 import com.abdul.admin.domain.linkedin.model.LinkedinOauthLoginRequest;
 import com.abdul.admin.domain.linkedin.port.in.LinkedInOAuthUseCase;
 import com.abdul.admin.domain.linkedin.usecase.HandleLinkedinOauthRedirectUseCase;
@@ -38,7 +38,7 @@ public class AuthController {
     private final UserDtoMapper userDtoMapper;
     private final RegisterUserUseCase registerUserUseCase;
     private final GetGoogleAuthUrlUseCase getGoogleAuthUrlUseCase;
-    private final HandleOAuthRedirectUseCase handleOAuthRedirectUseCase;
+    private final HandleGoogleOAuthRedirectUseCase handleGoogleOAuthRedirectUseCase;
     private final LinkedInOAuthUseCase linkedInOAuthUseCase;
     private final XOAuthUseCase xoAuthUseCase;
     private final ApplicationContext applicationContext;
@@ -67,7 +67,7 @@ public class AuthController {
     @GetMapping("/oauth2/google/redirect")
     public ResponseEntity<String> handleLoginWithGoogle(GoogleOauthRedirectInfo googleOauthRedirectInfo)
             throws IOException {
-        String token = handleOAuthRedirectUseCase.execute(googleOauthRedirectInfo);
+        String token = handleGoogleOAuthRedirectUseCase.execute(googleOauthRedirectInfo);
         return ResponseEntity.ok(
                 token
         );

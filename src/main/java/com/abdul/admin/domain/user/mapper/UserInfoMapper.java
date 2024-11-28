@@ -1,5 +1,6 @@
 package com.abdul.admin.domain.user.mapper;
 
+import com.abdul.admin.domain.google.model.GoogleUserResponse;
 import com.abdul.admin.domain.linkedin.model.AccessToken;
 import com.abdul.admin.domain.linkedin.model.LinkedinUserResponse;
 import com.abdul.admin.domain.twitter.model.TwitterAccessTokenResponse;
@@ -12,6 +13,16 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface UserInfoMapper {
+
+    @Mapping(source = "googleUserResponse.name", target = "userInfo.username")
+    @Mapping(source = "googleUserResponse.familyName", target = "userInfo.lastName")
+    @Mapping(source = "googleUserResponse.givenName", target = "userInfo.firstName")
+    @Mapping(source = "googleUserResponse.verifiedEmail", target = "userInfo.emailVerified")
+    @Mapping(source = "googleUserResponse.id", target = "userInfo.googleUser.googleId")
+    @Mapping(source = "googleUserResponse.picture", target = "userInfo.googleUser.picture")
+    @Mapping(source = "authUserId", target = "userInfo.googleUser.authUserId")
+    @Mapping(target = "userInfo.googleUser.user", ignore = true)
+    UserInfo map(@MappingTarget UserInfo userInfo, GoogleUserResponse googleUserResponse, String authUserId);
 
     @Mapping(source = "state", target = "userInfo.twitterUser.state")
     @Mapping(source = "authCode", target = "userInfo.twitterUser.usedAuthCode")

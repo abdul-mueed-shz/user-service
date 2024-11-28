@@ -5,9 +5,11 @@ import com.abdul.admin.domain.google.model.GoogleOauthRedirectInfo;
 import com.abdul.admin.domain.google.model.GoogleUserResponse;
 import com.abdul.admin.domain.google.port.in.GetGoogleOAuthRedirectUriUseCase;
 import com.abdul.admin.domain.google.port.in.GetUserProfileUseCase;
-import com.abdul.admin.domain.google.port.in.HandleOAuthRedirectUseCase;
+import com.abdul.admin.domain.google.port.in.HandleGoogleOAuthRedirectUseCase;
+import com.abdul.admin.domain.user.mapper.UserInfoMapper;
 import com.abdul.admin.domain.user.model.UserInfo;
 import com.abdul.admin.domain.user.port.in.RegisterUserUseCase;
+import com.abdul.admin.domain.user.port.in.UpdateUserUseCase;
 import com.abdul.admin.domain.user.port.out.repository.UserRepository;
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
 import com.google.api.client.auth.oauth2.AuthorizationCodeTokenRequest;
@@ -23,7 +25,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 @RequiredArgsConstructor
-public class HandleOAuthRedirectUseCaseImpl implements HandleOAuthRedirectUseCase {
+public class HandleGoogleOAuthRedirectUseCaseImpl implements HandleGoogleOAuthRedirectUseCase {
 
     private final AuthorizationCodeFlow authorizationCodeFlow;
     private final GetGoogleOAuthRedirectUriUseCase getGoogleOAuthRedirectUriUseCase;
@@ -31,6 +33,8 @@ public class HandleOAuthRedirectUseCaseImpl implements HandleOAuthRedirectUseCas
     private final UserDtoMapper userDtoMapper;
     private final RegisterUserUseCase registerUserUseCase;
     private final UserRepository userRepository;
+    private final UpdateUserUseCase updateUserUseCase;
+    private final UserInfoMapper userInfoMapper;
 
     @Value("${spring.application.client-app-home-url}")
     private String clientAppHomeUrl;
@@ -40,38 +44,35 @@ public class HandleOAuthRedirectUseCaseImpl implements HandleOAuthRedirectUseCas
         Credential credential = authorizationCodeFlow.loadCredential(googleOauthRedirectInfo.getAuthuser());
         UserInfo userInfo = userRepository.findByGoogleAuthUser(googleOauthRedirectInfo.getAuthuser());
         if (Objects.nonNull(credential) && Objects.nonNull(userInfo)) {
-            // Check if token expired using expired in seconds and createdAi
-            // If not return system gen token
-            // If yes call refresh token to fetch new access token
-            // If found return system generated token, else let upcoming flow execute.
-            if (isAccessTokenValid(userInfo, credential)) {
-                return "System Generated Token";
-            }
-            if (credential.refreshToken()) {
-                return "System Generated Token";
-            }
+            executeAccessTokenFlow(userInfo, credential, googleOauthRedirectInfo.getCode(),
+                    googleOauthRedirectInfo.getAuthuser());
+        } else {
+            executeAuthorizationCodeFlow(googleOauthRedirectInfo.getCode(), googleOauthRedirectInfo.getAuthuser());
         }
-
-        AuthorizationCodeTokenRequest tokenRequest = authorizationCodeFlow.newTokenRequest(
-                googleOauthRedirectInfo.getCode()).setRedirectUri(getGoogleOAuthRedirectUriUseCase.execute());
-
-        TokenResponse tokenResponse = tokenRequest.execute();
-        authorizationCodeFlow.createAndStoreCredential(tokenResponse, googleOauthRedirectInfo.getAuthuser());
-
-        GoogleUserResponse googleUserResponse = getUserProfileUseCase.execute(googleOauthRedirectInfo.getAuthuser());
-        registerUserUseCase.execute(userDtoMapper.map(googleUserResponse, googleOauthRedirectInfo.getAuthuser()));
-        /*
-         * TODO:
-         * Check if user with same google id & authUserId exists. If yes fetch it, else register.
-         * Create user-admin apps jwt token using the user-details from the above step.
-         * (b)Return the JWT token to FE using Spring Socket or (b)from this function.
-         *       a - Return FE's home page url from this function with Params(if required).
-         *           Show loader on FE until socket's response for JWT
-         *       b - Return to FE's home page url from this function with token in query params.
-         */
-        return UriComponentsBuilder.fromHttpUrl(clientAppHomeUrl)
-                .queryParam("token", tokenResponse.getAccessToken())
+        return UriComponentsBuilder.fromHttpUrl(clientAppHomeUrl).queryParam("token", "System Generated Token")
                 .toUriString();
+    }
+
+    private void executeAccessTokenFlow(UserInfo userInfo, Credential credential, String code, String authUser)
+            throws IOException {
+        if (isAccessTokenValid(userInfo, credential) || credential.refreshToken()) {
+            return;
+        }
+        executeAuthorizationCodeFlow(code, authUser);
+    }
+
+    private void executeAuthorizationCodeFlow(String code, String authUser) throws IOException {
+        AuthorizationCodeTokenRequest tokenRequest = authorizationCodeFlow.newTokenRequest(code)
+                .setRedirectUri(getGoogleOAuthRedirectUriUseCase.execute());
+        TokenResponse tokenResponse = tokenRequest.execute();
+        authorizationCodeFlow.createAndStoreCredential(tokenResponse, authUser);
+        GoogleUserResponse googleUserResponse = getUserProfileUseCase.execute(authUser);
+        UserInfo userInfo = userRepository.findByUsernameOrEmail(googleUserResponse.getEmail());
+        if (Objects.nonNull(userInfo)) {
+            updateUserUseCase.execute(userInfoMapper.map(userInfo, googleUserResponse, authUser));
+            return;
+        }
+        registerUserUseCase.execute(userDtoMapper.map(googleUserResponse, authUser));
     }
 
     protected boolean isAccessTokenValid(UserInfo userInfo, Credential credential) {

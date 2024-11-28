@@ -43,9 +43,9 @@ public class HandleLinkedinOauthRedirectUseCase extends AbstractUserOauthUseCase
         UserInfo userInfo = getUserByState(state);
         if (Objects.nonNull(userInfo)) {
             executeTokenValidationFlow(code, state, userInfo);
-            return "System Generated Token";
+        } else {
+            executeAuthCodeFlow(code, state);
         }
-        executeAuthCodeFlow(code, state);
         return "System Generated Token"; // Return system generated token
     }
 
