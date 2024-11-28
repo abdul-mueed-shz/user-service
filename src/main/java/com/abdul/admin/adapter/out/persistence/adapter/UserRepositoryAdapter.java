@@ -37,7 +37,7 @@ public class UserRepositoryAdapter implements UserRepository {
     }
 
     @Override
-    public UserInfo findBySearchTerm(String searchTerm) {
+    public UserInfo findByUsernameOrEmail(String searchTerm) {
         Optional<User> userOptional = userJpaRepository.findUserByUsernameOrEmail(searchTerm);
         return userOptional.map(userMapper::map).orElse(null);
     }
@@ -54,4 +54,9 @@ public class UserRepositoryAdapter implements UserRepository {
         return userOptional.map(userMapper::map).orElse(null);
     }
 
+    @Override
+    public UserInfo findByGoogleAuthUser(String googleAuthUser) {
+        Optional<User> userOptional = userJpaRepository.findUserByGoogleUser_AuthUserId(googleAuthUser);
+        return userOptional.map(userMapper::map).orElse(null);
+    }
 }

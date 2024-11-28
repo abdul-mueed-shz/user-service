@@ -18,7 +18,7 @@ public class GetGoogleAuthUrlUseCaseImpl implements GetGoogleAuthUrlUseCase {
     private final AuthorizationCodeFlow authorizationCodeFlow;
 
     public String execute(GoogleOauthLoginRequest googleOauthLoginRequest) {
-        if (Objects.nonNull(userRepository.findBySearchTerm(googleOauthLoginRequest.getSearchTerm()))) {
+        if (Objects.nonNull(userRepository.findByUsernameOrEmail(googleOauthLoginRequest.getSearchTerm()))) {
             // throw Error. user is already registered in the system. login with email/username
             return null;
         }

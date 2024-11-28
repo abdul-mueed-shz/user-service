@@ -12,9 +12,11 @@ public interface UserRepository {
 
     List<UserInfo> findAll();
 
-    UserInfo findBySearchTerm(String searchTerm); // Username or Email for now
+    UserInfo findByUsernameOrEmail(String searchTerm); // Username or Email for now
 
     UserInfo findByUserLinkedinState(String state);
 
     UserInfo findByUserTwitterState(String state);
+
+    UserInfo findByGoogleAuthUser(String authUser);
 }

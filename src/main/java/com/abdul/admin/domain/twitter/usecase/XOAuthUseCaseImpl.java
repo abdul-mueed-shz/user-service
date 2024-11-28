@@ -21,7 +21,7 @@ public class XOAuthUseCaseImpl implements XOAuthUseCase {
 
     @Override
     public String getRedirectUri(XOauthLoginRequest xOauthLoginRequest) throws IOException {
-        if (Objects.nonNull(userRepository.findBySearchTerm(xOauthLoginRequest.getSearchTerm()))) {
+        if (Objects.nonNull(userRepository.findByUsernameOrEmail(xOauthLoginRequest.getSearchTerm()))) {
             // throw Error. user is already registered in the system. login with email/username
             return null;
         }

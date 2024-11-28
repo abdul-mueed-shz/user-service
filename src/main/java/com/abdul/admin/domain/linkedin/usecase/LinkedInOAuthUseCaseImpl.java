@@ -27,7 +27,7 @@ public class LinkedInOAuthUseCaseImpl implements LinkedInOAuthUseCase {
 
     @Transactional
     public String execute(LinkedinOauthLoginRequest linkedinOauthLoginRequest) {
-        if (Objects.nonNull(userRepository.findBySearchTerm(linkedinOauthLoginRequest.getSearchTerm()))) {
+        if (Objects.nonNull(userRepository.findByUsernameOrEmail(linkedinOauthLoginRequest.getSearchTerm()))) {
             // throw Error. user is already registered in the system. login with email/username
             return null;
         }

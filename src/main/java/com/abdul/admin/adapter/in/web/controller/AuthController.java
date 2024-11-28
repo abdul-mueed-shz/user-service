@@ -7,13 +7,12 @@ import com.abdul.admin.domain.google.model.GoogleOauthRedirectInfo;
 import com.abdul.admin.domain.google.port.in.GetGoogleAuthUrlUseCase;
 import com.abdul.admin.domain.google.port.in.HandleOAuthRedirectUseCase;
 import com.abdul.admin.domain.linkedin.model.LinkedinOauthLoginRequest;
-import com.abdul.admin.domain.linkedin.model.LinkedinUserResponse;
-import com.abdul.admin.domain.linkedin.port.in.HandleLinkedinOauthRedirectUseCase;
 import com.abdul.admin.domain.linkedin.port.in.LinkedInOAuthUseCase;
+import com.abdul.admin.domain.linkedin.usecase.HandleLinkedinOauthRedirectUseCase;
 import com.abdul.admin.domain.twitter.model.XOauthLoginRequest;
 import com.abdul.admin.domain.twitter.model.XOauthRedirectInfo;
-import com.abdul.admin.domain.twitter.port.in.HandleXRedirectUseCase;
 import com.abdul.admin.domain.twitter.port.in.XOAuthUseCase;
+import com.abdul.admin.domain.twitter.usecase.HandleXRedirectUseCase;
 import com.abdul.admin.domain.user.port.in.RegisterUserUseCase;
 import com.abdul.admin.dto.MessageInfo;
 import com.abdul.admin.dto.RegisterUserRequest;
@@ -22,6 +21,7 @@ import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,9 +40,8 @@ public class AuthController {
     private final GetGoogleAuthUrlUseCase getGoogleAuthUrlUseCase;
     private final HandleOAuthRedirectUseCase handleOAuthRedirectUseCase;
     private final LinkedInOAuthUseCase linkedInOAuthUseCase;
-    private final HandleLinkedinOauthRedirectUseCase handleLinkedinOauthRedirectUseCase;
     private final XOAuthUseCase xoAuthUseCase;
-    private final HandleXRedirectUseCase handleXRedirectUseCase;
+    private final ApplicationContext applicationContext;
 
     @PostMapping(value = "/oauth2/twitter/login")
     public ResponseEntity<String> loginWithTwitter(@RequestBody XOauthLoginRequest xOauthLoginRequest)
@@ -65,14 +64,6 @@ public class AuthController {
         );
     }
 
-    @GetMapping("/oauth2/twitter/redirect")
-    public ResponseEntity<String> handleLoginWithTwitter(XOauthRedirectInfo xOauthRedirectInfo)
-            throws IOException, ExecutionException, InterruptedException, ApiException {
-        return ResponseEntity.ok(
-                handleXRedirectUseCase.execute(xOauthRedirectInfo)
-        );
-    }
-
     @GetMapping("/oauth2/google/redirect")
     public ResponseEntity<String> handleLoginWithGoogle(GoogleOauthRedirectInfo googleOauthRedirectInfo)
             throws IOException {
@@ -82,10 +73,22 @@ public class AuthController {
         );
     }
 
+    @GetMapping("/oauth2/twitter/redirect")
+    public ResponseEntity<String> handleLoginWithTwitter(XOauthRedirectInfo xOauthRedirectInfo)
+            throws IOException, ExecutionException, InterruptedException, ApiException {
+        HandleXRedirectUseCase handleXRedirectUseCase =
+                (HandleXRedirectUseCase) applicationContext.getBean("twitter");
+        return ResponseEntity.ok(
+                handleXRedirectUseCase.execute(xOauthRedirectInfo.getCode(), xOauthRedirectInfo.getState())
+        );
+    }
+
     @GetMapping("/oauth2/linkedin/redirect")
-    public ResponseEntity<LinkedinUserResponse> handleLoginWithLinkedin(
+    public ResponseEntity<String> handleLoginWithLinkedin(
             @RequestParam(name = "state", required = false) final String state,
             @RequestParam(name = "code", required = false) final String code) {
+        HandleLinkedinOauthRedirectUseCase handleLinkedinOauthRedirectUseCase =
+                (HandleLinkedinOauthRedirectUseCase) applicationContext.getBean("linkedin");
         return ResponseEntity.ok(handleLinkedinOauthRedirectUseCase.execute(code, state));
     }
 
