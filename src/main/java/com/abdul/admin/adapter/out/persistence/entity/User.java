@@ -83,6 +83,10 @@ public class User implements UserDetails, Serializable {
     @JoinColumn(name = "twitter_user_id", referencedColumnName = "id")
     private TwitterUser twitterUser;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "github_user_id", referencedColumnName = "id")
+    private GithubUser githubUser;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

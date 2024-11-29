@@ -1,5 +1,6 @@
 package com.abdul.admin.domain.user.usecase;
 
+import com.abdul.admin.domain.user.model.Oauth2LoginResponse;
 import com.abdul.admin.domain.user.model.UserInfo;
 import com.twitter.clientlib.ApiException;
 import jakarta.transaction.Transactional;
@@ -13,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 public abstract class AbstractUserOauthUseCase {
 
     @Transactional
-    public String execute(String code, String state)
+    public Oauth2LoginResponse execute(String code, String state)
             throws IOException, ExecutionException, InterruptedException, ApiException {
         UserInfo userInfo = getUserByState(state);
         if (Objects.nonNull(userInfo)) {
@@ -21,7 +22,10 @@ public abstract class AbstractUserOauthUseCase {
         } else {
             executeAuthCodeFlow(code, state);
         }
-        return "Return System Token.";
+        return Oauth2LoginResponse.builder()
+                .accessToken("System Generated")
+                .refreshToken("System Generated")
+                .build();
     }
 
     protected abstract UserInfo getUserByState(String state);

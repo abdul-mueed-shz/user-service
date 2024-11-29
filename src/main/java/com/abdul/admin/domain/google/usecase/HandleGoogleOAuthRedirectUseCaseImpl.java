@@ -7,6 +7,7 @@ import com.abdul.admin.domain.google.port.in.GetGoogleOAuthRedirectUriUseCase;
 import com.abdul.admin.domain.google.port.in.GetUserProfileUseCase;
 import com.abdul.admin.domain.google.port.in.HandleGoogleOAuthRedirectUseCase;
 import com.abdul.admin.domain.user.mapper.UserInfoMapper;
+import com.abdul.admin.domain.user.model.Oauth2LoginResponse;
 import com.abdul.admin.domain.user.model.UserInfo;
 import com.abdul.admin.domain.user.port.in.RegisterUserUseCase;
 import com.abdul.admin.domain.user.port.in.UpdateUserUseCase;
@@ -21,7 +22,6 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +40,7 @@ public class HandleGoogleOAuthRedirectUseCaseImpl implements HandleGoogleOAuthRe
     private String clientAppHomeUrl;
 
     @Override
-    public String execute(GoogleOauthRedirectInfo googleOauthRedirectInfo) throws IOException {
+    public Oauth2LoginResponse execute(GoogleOauthRedirectInfo googleOauthRedirectInfo) throws IOException {
         Credential credential = authorizationCodeFlow.loadCredential(googleOauthRedirectInfo.getAuthuser());
         UserInfo userInfo = getUserByState(googleOauthRedirectInfo.getAuthuser());
         if (Objects.nonNull(credential) && Objects.nonNull(userInfo)) {
@@ -52,8 +52,10 @@ public class HandleGoogleOAuthRedirectUseCaseImpl implements HandleGoogleOAuthRe
         } else {
             executeAuthCodeFlow(googleOauthRedirectInfo.getCode(), googleOauthRedirectInfo.getAuthuser());
         }
-        return UriComponentsBuilder.fromHttpUrl(clientAppHomeUrl).queryParam("token", "System Generated Token")
-                .toUriString();
+        return Oauth2LoginResponse.builder()
+                .accessToken("System Generated")
+                .refreshToken("System Generated")
+                .build();
     }
 
     protected UserInfo getUserByState(String authUser) {

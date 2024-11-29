@@ -1,5 +1,6 @@
 package com.abdul.admin.domain.user.mapper;
 
+import com.abdul.admin.domain.github.model.GithubUserResponse;
 import com.abdul.admin.domain.google.model.GoogleUserResponse;
 import com.abdul.admin.domain.linkedin.model.LinkedinUserResponse;
 import com.abdul.admin.domain.twitter.model.TwitterAccessTokenResponse;
@@ -14,6 +15,19 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface UserInfoMapper {
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(source = "githubUserResponse.login", target = "username")
+    @Mapping(source = "githubUserResponse.name", target = "firstName")
+    @Mapping(source = "githubUserResponse.avatarUrl", target = "githubUser.avatarUrl")
+    @Mapping(source = "githubUserResponse.htmlUrl", target = "githubUser.htmlUrl")
+    @Mapping(source = "githubUserResponse.hireable", target = "githubUser.hireable")
+    @Mapping(source = "githubUserResponse.bio", target = "githubUser.bio")
+    @Mapping(source = "githubUserResponse.company", target = "githubUser.company")
+    @Mapping(source = "githubUserResponse.blog", target = "githubUser.blog")
+    @Mapping(source = "accessToken.token", target = "githubUser.accessToken")
+    UserInfo map(@MappingTarget UserInfo userInfo, GithubUserResponse githubUserResponse, AccessToken accessToken);
+
+    @Mapping(target = "id", ignore = true)
     @Mapping(source = "googleUserResponse.name", target = "userInfo.username")
     @Mapping(source = "googleUserResponse.familyName", target = "userInfo.lastName")
     @Mapping(source = "googleUserResponse.givenName", target = "userInfo.firstName")
@@ -24,6 +38,7 @@ public interface UserInfoMapper {
     @Mapping(target = "userInfo.googleUser.user", ignore = true)
     UserInfo map(@MappingTarget UserInfo userInfo, GoogleUserResponse googleUserResponse, String authUserId);
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(source = "state", target = "userInfo.twitterUser.state")
     @Mapping(source = "authCode", target = "userInfo.twitterUser.usedAuthCode")
     @Mapping(source = "twitterAccessTokenResponse.accessToken", target = "userInfo.twitterUser.accessToken")
@@ -34,12 +49,8 @@ public interface UserInfoMapper {
     @Mapping(source = "twitterUserResponse.profileImageUrl", target = "userInfo.twitterUser.picture")
     @Mapping(source = "twitterUserResponse.name", target = "firstName")
     @Mapping(source = "twitterUserResponse.username", target = "username")
-    UserInfo map(
-            @MappingTarget UserInfo userInfo,
-            TwitterAccessTokenResponse twitterAccessTokenResponse,
-            TwitterUserResponse twitterUserResponse,
-            String authCode,
-            String state);
+    UserInfo map(@MappingTarget UserInfo userInfo, TwitterAccessTokenResponse twitterAccessTokenResponse,
+            TwitterUserResponse twitterUserResponse, String authCode, String state);
 
     @Mapping(source = "state", target = "userInfo.linkedinUser.state")
     @Mapping(source = "authCode", target = "userInfo.linkedinUser.usedAuthCode")
@@ -52,10 +63,7 @@ public interface UserInfoMapper {
     @Mapping(source = "linkedinUserResponse.name", target = "userInfo.username")
     @Mapping(source = "linkedinUserResponse.familyName", target = "userInfo.lastName")
     @Mapping(source = "linkedinUserResponse.givenName", target = "userInfo.firstName")
-    UserInfo map(
-            @MappingTarget UserInfo userInfo,
-            LinkedinUserResponse linkedinUserResponse,
-            AccessToken accessToken,
-            String state,
-            String authCode);
+    @Mapping(target = "id", ignore = true)
+    UserInfo map(@MappingTarget UserInfo userInfo, LinkedinUserResponse linkedinUserResponse, AccessToken accessToken,
+            String state, String authCode);
 }

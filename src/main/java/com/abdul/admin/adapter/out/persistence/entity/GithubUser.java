@@ -10,17 +10,22 @@ import jakarta.persistence.OneToOne;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+
 @Setter
 @Getter
 @EntityListeners(AuditingEntityListener.class)
 @Entity
-public class LinkedinUser implements Serializable {
+@AllArgsConstructor
+@NoArgsConstructor
+public class GithubUser implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L; // Recommended for Serializable classes
@@ -30,31 +35,24 @@ public class LinkedinUser implements Serializable {
     private Long id;
 
     @Column
-    private String state;
-
-    @Column(length = 2056)
-    private String idToken;
-
-    @Column(length = 2056)
-    private String accessToken;
+    private boolean hireable;
 
     @Column
-    private String usedAuthCode;
+    private String bio;
 
     @Column
-    private String tokenScope;
+    private String company;
 
     @Column
-    private String expiresIn;
+    private String blog;
+
 
     @Column
-    private String tokenType;
+    private String htmlUrl;
+
 
     @Column
-    private String picture;
-
-    @OneToOne(mappedBy = "linkedinUser")
-    private User user;
+    private String avatarUrl;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
@@ -63,4 +61,10 @@ public class LinkedinUser implements Serializable {
     @LastModifiedDate
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    @Column
+    private String accessToken;
+
+    @OneToOne(mappedBy = "githubUser")
+    private User user;
 }

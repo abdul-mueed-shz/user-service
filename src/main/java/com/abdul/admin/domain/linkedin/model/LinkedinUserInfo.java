@@ -22,4 +22,5 @@ public class LinkedinUserInfo {
     private String tokenType;
     private String picture;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

@@ -31,10 +31,11 @@ public class LinkedInOAuthUseCaseImpl extends AbstractGetOAuthUrlUseCase {
         String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         String scopes = String.join("+", oauthProperties.getRegistration().getLinkedin().getScope());
 
-        return oauth2Helper.getUrl(baseUrl, oauthProperties.getProvider().getGithub().getAuthorizationUri(),
-                oauthProperties.getRegistration().getGithub().getAuthorizationGrantType(),
-                oauthProperties.getRegistration().getGithub().getClientId(),
-                oauthProperties.getRegistration().getGithub().getRedirectUri(), oauthLoginRequest.getSearchTerm(),
-                scopes);
+        return oauth2Helper.getUrl(baseUrl, oauthProperties.getProvider().getLinkedin().getAuthorizationUri(),
+                oauthProperties.getRegistration().getLinkedin().getAuthorizationGrantType(),
+                oauthProperties.getRegistration().getLinkedin().getClientId(),
+                oauthProperties.getRegistration().getLinkedin().getRedirectUri(),
+                scopes,
+                oauthLoginRequest.getSearchTerm());
     }
 }

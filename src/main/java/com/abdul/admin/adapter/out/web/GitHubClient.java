@@ -1,6 +1,7 @@
 package com.abdul.admin.adapter.out.web;
 
 import com.abdul.admin.config.OauthProperties;
+import com.abdul.admin.domain.github.model.GithubUserResponse;
 import com.abdul.admin.domain.user.model.AccessToken;
 import com.github.scribejava.core.oauth.OAuth20Service;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,14 +30,13 @@ public class GitHubClient {
         this.githubOauth2Service = githubOauth2Service;
     }
 
-    public String getUserProfile(String accessToken) throws WebClientResponseException {
+    public GithubUserResponse getUserProfile(AccessToken accessToken) throws WebClientResponseException {
         return webClient.get()
                 .uri(oauthProperties.getProvider().getGithub().getUserInfoUri())
-                .headers(headers -> headers.setBearerAuth(accessToken))
+                .headers(headers -> headers.setBearerAuth(accessToken.getToken()))
                 .retrieve()
-                .bodyToMono(String.class)
-                .block();
-
+                .bodyToMono(GithubUserResponse.class) // Map directly to the GithubUserResponse class
+                .block(); // Blocking call; use reactive alternatives in production if possible
     }
 
     public AccessToken fetchAccessToken(String code) throws WebClientResponseException {

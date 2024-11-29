@@ -19,6 +19,7 @@ public class TwitterUserInfo {
     private String expiresIn;
     private String picture;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private String tokenScope;
     private String usedAuthCode;
     private String tokenType;

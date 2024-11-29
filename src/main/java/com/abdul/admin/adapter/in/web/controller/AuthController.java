@@ -4,11 +4,12 @@ import com.abdul.admin.adapter.in.web.mapper.UserDtoMapper;
 import com.abdul.admin.domain.enums.UserMessageCodeEnum;
 import com.abdul.admin.domain.google.model.GoogleOauthRedirectInfo;
 import com.abdul.admin.domain.google.port.in.HandleGoogleOAuthRedirectUseCase;
-import com.abdul.admin.domain.user.model.OauthLoginRequest;
 import com.abdul.admin.domain.user.port.in.RegisterUserUseCase;
 import com.abdul.admin.domain.user.usecase.AbstractGetOAuthUrlUseCase;
 import com.abdul.admin.domain.user.usecase.AbstractUserOauthUseCase;
 import com.abdul.admin.dto.MessageInfo;
+import com.abdul.admin.dto.Oauth2LoginRequest;
+import com.abdul.admin.dto.Oauth2LoginResponse;
 import com.abdul.admin.dto.RegisterUserRequest;
 import com.twitter.clientlib.ApiException;
 import jakarta.validation.Valid;
@@ -38,25 +39,27 @@ public class AuthController {
     @PostMapping("/oauth2/{client}/login")
     public ResponseEntity<String> oauth2Login(
             @PathVariable("client") String client,
-            @RequestBody OauthLoginRequest oauthLoginRequest) throws IOException {
+            @RequestBody Oauth2LoginRequest oauthLoginRequest) throws IOException {
         AbstractGetOAuthUrlUseCase abstractGetOAuthUrlUseCase =
                 (AbstractGetOAuthUrlUseCase) applicationContext.getBean(client);
         return ResponseEntity.ok(
-                abstractGetOAuthUrlUseCase.execute(client, oauthLoginRequest)
+                abstractGetOAuthUrlUseCase.execute(userDtoMapper.map(oauthLoginRequest))
         );
     }
 
     @GetMapping("/oauth2/google/redirect")
-    public ResponseEntity<String> handleGoogleOauthRedirect(GoogleOauthRedirectInfo googleOauthRedirectInfo)
+    public ResponseEntity<Oauth2LoginResponse> handleGoogleOauthRedirect(
+            GoogleOauthRedirectInfo googleOauthRedirectInfo)
             throws IOException {
-        String token = handleGoogleOAuthRedirectUseCase.execute(googleOauthRedirectInfo);
+        com.abdul.admin.domain.user.model.Oauth2LoginResponse oauth2LoginResponse =
+                handleGoogleOAuthRedirectUseCase.execute(googleOauthRedirectInfo);
         return ResponseEntity.ok(
-                token
+                userDtoMapper.map(oauth2LoginResponse)
         );
     }
 
     @GetMapping("/oauth2/{client}/redirect")
-    public ResponseEntity<String> handleOauthRedirect(
+    public ResponseEntity<Oauth2LoginResponse> handleOauthRedirect(
             @PathVariable("client") String client,
             @RequestParam(name = "state", required = false) final String state,
             @RequestParam(name = "code", required = false) final String code)
@@ -64,7 +67,9 @@ public class AuthController {
         String beanName = client + "Redirect";
         AbstractUserOauthUseCase handleLinkedinOauthRedirectUseCase =
                 (AbstractUserOauthUseCase) applicationContext.getBean(beanName);
-        return ResponseEntity.ok(handleLinkedinOauthRedirectUseCase.execute(code, state));
+        com.abdul.admin.domain.user.model.Oauth2LoginResponse oauth2LoginResponse =
+                handleLinkedinOauthRedirectUseCase.execute(code, state);
+        return ResponseEntity.ok(userDtoMapper.map(oauth2LoginResponse));
     }
 
     @PostMapping("/auth/register")

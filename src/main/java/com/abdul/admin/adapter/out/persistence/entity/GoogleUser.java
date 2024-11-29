@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Setter
@@ -38,7 +39,12 @@ public class GoogleUser implements Serializable {
     private String picture;
 
     @CreatedDate
-    LocalDateTime createdAt;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
 
     @OneToOne(mappedBy = "googleUser")
     private User user;

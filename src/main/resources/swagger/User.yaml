@@ -22,6 +22,34 @@ tags:
     description: User Controller
 
 paths:
+  /api/v1/oauth2/{client}/login:
+    post:
+      tags:
+        - User
+      summary: Oauth2 login (X formerly twitter, Google, Linkedin, Github)
+      operationId: oauth2Login
+      parameters:
+        - in: path
+          name: client
+          schema:
+            type: string
+          required: true
+          description: client name to login for.
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Oauth2LoginRequest'
+      responses:
+        '200':
+          description: Response indicates successful login of the user.
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Oauth2LoginResponse'
   /api/v1/users/register:
     post:
       tags:
@@ -180,6 +208,10 @@ components:
           $ref: "#/components/schemas/GoogleUserInfo"
         linkedinUser:
           $ref: "#/components/schemas/LinkedinUserInfo"
+        twitterUser:
+          $ref: "#/components/schemas/TwitterUserInfo"
+        githubUser:
+          $ref: "#/components/schemas/GithubUserInfo"
         roles:
           type: array
           items:
@@ -296,6 +328,12 @@ components:
           type: string
         picture:
           type: string
+        createdAt:
+          type: string
+          format: datetime
+        updatedAt:
+          type: string
+          format: datetime
 
     LinkedinUserInfo:
       type: object
@@ -304,4 +342,66 @@ components:
           type: integer
           format: int64
         picture:
+          type: string
+        createdAt:
+          type: string
+          format: datetime
+        updatedAt:
+          type: string
+          format: datetime
+
+    TwitterUserInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        picture:
+          type: string
+        createdAt:
+          type: string
+          format: datetime
+        updatedAt:
+          type: string
+          format: datetime
+
+    GithubUserInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        avatarUrl:
+          type: string
+        htmlUrl:
+          type: string
+        blog:
+          type: string
+        company:
+          type: string
+        bio:
+          type: string
+        hireable:
+          type: boolean
+        createdAt:
+          type: string
+          format: datetime
+        updatedAt:
+          type: string
+          format: datetime
+
+    Oauth2LoginRequest:
+      type: object
+      required:
+        - searchTerm
+      properties:
+        searchTerm:
+          type: string
+
+    Oauth2LoginResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
           type: string

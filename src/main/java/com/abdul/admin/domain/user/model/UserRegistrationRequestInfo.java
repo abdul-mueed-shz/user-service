@@ -1,6 +1,7 @@
 package com.abdul.admin.domain.user.model;
 
 import com.abdul.admin.adapter.out.persistence.entity.Role;
+import com.abdul.admin.domain.github.model.GithubUserInfo;
 import com.abdul.admin.domain.google.model.GoogleUserInfo;
 import com.abdul.admin.domain.linkedin.model.LinkedinUserInfo;
 import com.abdul.admin.domain.twitter.model.TwitterUserInfo;
@@ -25,5 +26,6 @@ public class UserRegistrationRequestInfo {
     private GoogleUserInfo googleUser;
     private LinkedinUserInfo linkedinUser;
     private TwitterUserInfo twitterUser;
+    private GithubUserInfo githubUser;
     private Boolean emailVerified;
 }

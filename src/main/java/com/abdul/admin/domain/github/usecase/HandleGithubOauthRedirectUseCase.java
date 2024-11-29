@@ -1,32 +1,37 @@
 package com.abdul.admin.domain.github.usecase;
 
+import com.abdul.admin.adapter.in.web.mapper.UserDtoMapper;
 import com.abdul.admin.adapter.out.web.GitHubClient;
 import com.abdul.admin.config.OauthProperties;
+import com.abdul.admin.domain.github.model.GithubUserResponse;
 import com.abdul.admin.domain.twitter.utils.Oauth2Helper;
+import com.abdul.admin.domain.user.mapper.UserInfoMapper;
 import com.abdul.admin.domain.user.model.AccessToken;
 import com.abdul.admin.domain.user.model.UserInfo;
+import com.abdul.admin.domain.user.model.UserRegistrationRequestInfo;
+import com.abdul.admin.domain.user.port.in.GetUserDetailUseCase;
+import com.abdul.admin.domain.user.port.in.RegisterUserUseCase;
+import com.abdul.admin.domain.user.port.in.UpdateUserUseCase;
 import com.abdul.admin.domain.user.usecase.AbstractUserOauthUseCase;
 import com.twitter.clientlib.ApiException;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service("githubRedirect")
+@RequiredArgsConstructor
 public class HandleGithubOauthRedirectUseCase extends AbstractUserOauthUseCase {
 
     private final OauthProperties oauthProperties;
     private final Oauth2Helper oauth2Helper;
     private final GitHubClient gitHubClient;
-
-    public HandleGithubOauthRedirectUseCase(
-            OauthProperties oauthProperties,
-            Oauth2Helper oauth2Helper,
-            GitHubClient gitHubClient
-    ) {
-        this.oauthProperties = oauthProperties;
-        this.oauth2Helper = oauth2Helper;
-        this.gitHubClient = gitHubClient;
-    }
+    private final GetUserDetailUseCase getUserDetailUseCase;
+    private final UpdateUserUseCase updateUserUseCase;
+    private final RegisterUserUseCase registerUserUseCase;
+    private final UserInfoMapper userInfoMapper;
+    private final UserDtoMapper userDtoMapper;
 
     /**
      * @param state
@@ -34,6 +39,7 @@ public class HandleGithubOauthRedirectUseCase extends AbstractUserOauthUseCase {
      */
     @Override
     protected UserInfo getUserByState(String state) {
+        // Because state is always null for GITHUB. Proceed with null response.
         return null;
     }
 
@@ -48,8 +54,9 @@ public class HandleGithubOauthRedirectUseCase extends AbstractUserOauthUseCase {
      */
     @Override
     protected void executeTokenValidationFlow(String code, String state, UserInfo userInfo)
-            throws ApiException, IOException, ExecutionException, InterruptedException {
-
+            throws IOException, InterruptedException {
+        // Because state is always null for GITHUB. Proceed with auth code flow.
+        executeAuthCodeFlow(code, state);
     }
 
     /**
@@ -57,8 +64,22 @@ public class HandleGithubOauthRedirectUseCase extends AbstractUserOauthUseCase {
      * @param state
      */
     @Override
-    protected void executeAuthCodeFlow(String code, String state)
-            throws IOException, ExecutionException, InterruptedException {
+    protected void executeAuthCodeFlow(String code, String state) {
         AccessToken accessToken = gitHubClient.fetchAccessToken(code);
+        GithubUserResponse githubUserResponse = gitHubClient.getUserProfile(accessToken);
+        UserInfo userInfo = getUserDetailUseCase.get(githubUserResponse.getEmail());
+        if (Objects.nonNull(userInfo)) {
+            UserInfo updatedUserInfo =
+                    userInfoMapper.map(
+                            userInfo,
+                            githubUserResponse,
+                            accessToken
+                    );
+            updateUserUseCase.execute(updatedUserInfo);
+            return;
+        }
+        UserRegistrationRequestInfo userRegistrationRequestInfo =
+                userDtoMapper.map(githubUserResponse, accessToken);
+        registerUserUseCase.execute(userRegistrationRequestInfo);
     }
 }

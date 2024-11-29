@@ -13,11 +13,9 @@ public abstract class AbstractGetOAuthUrlUseCase {
     public final UserRepository userRepository;
     private final ApplicationContext applicationContext;
 
-    public String execute(String client, OauthLoginRequest oauthLoginRequest) throws IOException {
+    public String execute(OauthLoginRequest oauthLoginRequest) throws IOException {
         validateSearchTerm(oauthLoginRequest);
-        AbstractGetOAuthUrlUseCase abstractGetOAuthUrlUseCase =
-                (AbstractGetOAuthUrlUseCase) applicationContext.getBean(client);
-        return abstractGetOAuthUrlUseCase.getOauthAuthorizationUrl(oauthLoginRequest);
+        return getOauthAuthorizationUrl(oauthLoginRequest);
     }
 
     public abstract String getOauthAuthorizationUrl(OauthLoginRequest oauthLoginRequest) throws IOException;

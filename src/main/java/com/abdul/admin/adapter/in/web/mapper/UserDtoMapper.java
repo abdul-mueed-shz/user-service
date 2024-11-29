@@ -1,13 +1,17 @@
 package com.abdul.admin.adapter.in.web.mapper;
 
 
+import com.abdul.admin.domain.github.model.GithubUserResponse;
 import com.abdul.admin.domain.google.model.GoogleUserResponse;
 import com.abdul.admin.domain.linkedin.model.LinkedinUserResponse;
 import com.abdul.admin.domain.twitter.model.TwitterAccessTokenResponse;
 import com.abdul.admin.domain.twitter.model.TwitterUserResponse;
 import com.abdul.admin.domain.user.model.AccessToken;
+import com.abdul.admin.domain.user.model.OauthLoginRequest;
 import com.abdul.admin.domain.user.model.UserInfo;
 import com.abdul.admin.domain.user.model.UserRegistrationRequestInfo;
+import com.abdul.admin.dto.Oauth2LoginRequest;
+import com.abdul.admin.dto.Oauth2LoginResponse;
 import com.abdul.admin.dto.RegisterUserRequest;
 import com.abdul.admin.dto.UserResponse;
 import java.time.LocalDateTime;
@@ -23,6 +27,10 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
  */
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface UserDtoMapper {
+
+    Oauth2LoginResponse map(com.abdul.admin.domain.user.model.Oauth2LoginResponse oauth2LoginResponse);
+
+    OauthLoginRequest map(Oauth2LoginRequest oauth2LoginRequest);
 
     @Mapping(source = "state", target = "twitterUser.state")
     @Mapping(source = "authCode", target = "twitterUser.usedAuthCode")
@@ -65,6 +73,17 @@ public interface UserDtoMapper {
     @Mapping(source = "googleUserInfo.picture", target = "googleUser.picture")
     @Mapping(source = "authUserId", target = "googleUser.authUserId")
     UserRegistrationRequestInfo map(GoogleUserResponse googleUserInfo, String authUserId);
+
+    @Mapping(source = "githubUserResponse.login", target = "username")
+    @Mapping(source = "githubUserResponse.name", target = "firstName")
+    @Mapping(source = "githubUserResponse.avatarUrl", target = "githubUser.avatarUrl")
+    @Mapping(source = "githubUserResponse.htmlUrl", target = "githubUser.htmlUrl")
+    @Mapping(source = "githubUserResponse.hireable", target = "githubUser.hireable")
+    @Mapping(source = "githubUserResponse.bio", target = "githubUser.bio")
+    @Mapping(source = "githubUserResponse.company", target = "githubUser.company")
+    @Mapping(source = "githubUserResponse.blog", target = "githubUser.blog")
+    @Mapping(source = "accessToken.token", target = "githubUser.accessToken")
+    UserRegistrationRequestInfo map(GithubUserResponse githubUserResponse, AccessToken accessToken);
 
     UserRegistrationRequestInfo map(RegisterUserRequest registerUserRequest);
 
