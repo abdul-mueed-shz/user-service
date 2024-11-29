@@ -13,10 +13,7 @@ import com.abdul.admin.domain.user.port.in.GetUserDetailUseCase;
 import com.abdul.admin.domain.user.port.in.RegisterUserUseCase;
 import com.abdul.admin.domain.user.port.in.UpdateUserUseCase;
 import com.abdul.admin.domain.user.usecase.AbstractUserOauthUseCase;
-import com.twitter.clientlib.ApiException;
-import java.io.IOException;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -47,14 +44,9 @@ public class HandleGithubOauthRedirectUseCase extends AbstractUserOauthUseCase {
      * @param code
      * @param state
      * @param userInfo
-     * @throws ApiException
-     * @throws IOException
-     * @throws ExecutionException
-     * @throws InterruptedException
      */
     @Override
-    protected void executeTokenValidationFlow(String code, String state, UserInfo userInfo)
-            throws IOException, InterruptedException {
+    protected void executeTokenValidationFlow(String code, String state, UserInfo userInfo) {
         // Because state is always null for GITHUB. Proceed with auth code flow.
         executeAuthCodeFlow(code, state);
     }
