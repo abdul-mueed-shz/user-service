@@ -13,22 +13,17 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("api/**")
-                                .permitAll()
-                                .anyRequest().authenticated()
-                )
-                .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/api/auth/google")
-                        .defaultSuccessUrl("/api/auth/userinfo", true) // Redirect after successful login
-                        .failureUrl("/api/auth/failure") // Redirect if login fails
-                );
-//                .oauth2Login(oauth2 -> oauth2
-//                        .successHandler((request, response, authentication) -> {
-//                            response.sendRedirect("/api/auth/userinfo");
-//                        })
-//                );
+        http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(
+                auth -> auth
+                        .requestMatchers(
+                                "/api/v1/oauth2/{client}/login",
+                                "/api/v1/oauth2/google/redirect",
+                                "/api/v1/oauth2/{client}/redirect",
+                                "/api/v1/auth/register",
+                                "/api/v1/auth/login")
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated());
         return http.build();
     }
 
