@@ -2,9 +2,7 @@ package com.abdul.admin.domain.github.usecase;
 
 import com.abdul.admin.adapter.in.web.mapper.UserDtoMapper;
 import com.abdul.admin.adapter.out.web.GitHubClient;
-import com.abdul.admin.config.OauthProperties;
 import com.abdul.admin.domain.github.model.GithubUserResponse;
-import com.abdul.admin.domain.twitter.utils.Oauth2Helper;
 import com.abdul.admin.domain.user.mapper.UserInfoMapper;
 import com.abdul.admin.domain.user.model.AccessToken;
 import com.abdul.admin.domain.user.model.UserInfo;
@@ -21,8 +19,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class HandleGithubOauthRedirectUseCase extends AbstractUserOauthUseCase {
 
-    private final OauthProperties oauthProperties;
-    private final Oauth2Helper oauth2Helper;
     private final GitHubClient gitHubClient;
     private final GetUserDetailUseCase getUserDetailUseCase;
     private final UpdateUserUseCase updateUserUseCase;
@@ -30,10 +26,6 @@ public class HandleGithubOauthRedirectUseCase extends AbstractUserOauthUseCase {
     private final UserInfoMapper userInfoMapper;
     private final UserDtoMapper userDtoMapper;
 
-    /**
-     * @param state
-     * @return
-     */
     @Override
     protected UserInfo getUserByState(String state) {
         // Because state is always null for GITHUB. Proceed with null response.
