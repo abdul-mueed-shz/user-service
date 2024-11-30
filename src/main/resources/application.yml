@@ -6,6 +6,11 @@ logging:
     org.springframework: INFO
     org.springframework.security: DEBUG
 
+app:
+  jwt:
+    secret-key: "0459022f685c9af39d232c64d010892e406dfea4ec282e36d00512ce33401180"
+    token-validity: 1440000
+    
 spring:
   security:
     oauth2:

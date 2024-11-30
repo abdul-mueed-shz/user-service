@@ -21,7 +21,7 @@ public interface UserMapper {
 
     User mapRegistrationInfoToUser(UserRegistrationRequestInfo userRegistrationRequestInfo);
 
-    User mapUpdateUserInfo(UserInfo userInfo);
+    User mapUserInfoToUser(UserInfo userInfo);
 
     @Mapping(target = "googleUser.user", ignore = true)
     UserInfo map(User user);

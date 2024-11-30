@@ -3,6 +3,8 @@ package com.abdul.admin.domain.user.port.out.repository;
 import com.abdul.admin.domain.user.model.UserInfo;
 import com.abdul.admin.domain.user.model.UserRegistrationRequestInfo;
 import java.util.List;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 public interface UserRepository {
 
@@ -19,4 +21,6 @@ public interface UserRepository {
     UserInfo findByUserTwitterState(String state);
 
     UserInfo findByGoogleAuthUser(String authUser);
+
+    UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
 }

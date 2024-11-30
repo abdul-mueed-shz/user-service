@@ -9,6 +9,8 @@ import com.abdul.admin.domain.user.port.out.repository.UserRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,7 +29,7 @@ public class UserRepositoryAdapter implements UserRepository {
 
     @Override
     public UserInfo updateUser(UserInfo userInfo) {
-        User user = userJpaRepository.save(userMapper.mapUpdateUserInfo(userInfo));
+        User user = userJpaRepository.save(userMapper.mapUserInfoToUser(userInfo));
         return userMapper.map(user);
     }
 
@@ -58,5 +60,12 @@ public class UserRepositoryAdapter implements UserRepository {
     public UserInfo findByGoogleAuthUser(String googleAuthUser) {
         Optional<User> userOptional = userJpaRepository.findUserByGoogleUser_AuthUserId(googleAuthUser);
         return userOptional.map(userMapper::map).orElse(null);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String searchTerm) throws UsernameNotFoundException {
+        // !BUG: Ensure only users with unique usernames/emails exist in the system
+        return userJpaRepository.findUserByUsernameOrEmail(searchTerm)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + searchTerm));
     }
 }

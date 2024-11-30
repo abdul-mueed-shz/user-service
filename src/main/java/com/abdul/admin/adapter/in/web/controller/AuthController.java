@@ -1,6 +1,9 @@
 package com.abdul.admin.adapter.in.web.controller;
 
 import com.abdul.admin.adapter.in.web.mapper.UserDtoMapper;
+import com.abdul.admin.domain.auth.model.AuthenticationInfo;
+import com.abdul.admin.domain.auth.model.AuthenticationRequestInfo;
+import com.abdul.admin.domain.auth.port.in.AuthenticateUserUseCase;
 import com.abdul.admin.domain.enums.UserMessageCodeEnum;
 import com.abdul.admin.domain.google.model.GoogleOauthRedirectInfo;
 import com.abdul.admin.domain.google.port.in.HandleGoogleOAuthRedirectUseCase;
@@ -35,6 +38,7 @@ public class AuthController {
     private final RegisterUserUseCase registerUserUseCase;
     private final HandleGoogleOAuthRedirectUseCase handleGoogleOAuthRedirectUseCase;
     private final ApplicationContext applicationContext;
+    private final AuthenticateUserUseCase authenticateUserUseCase;
 
     @PostMapping("/oauth2/{client}/login")
     public ResponseEntity<String> oauth2Login(
@@ -83,6 +87,16 @@ public class AuthController {
                         UserMessageCodeEnum.USER_REGISTERED_SUCCESSFULLY.getMessageCode())
         );
     }
+
+
+    @PostMapping("/auth/login")
+    public ResponseEntity<AuthenticationInfo> authenticateUser(
+            @Valid @RequestBody AuthenticationRequestInfo authenticationRequestInfo) {
+        return ResponseEntity.ok(
+                authenticateUserUseCase.authenticate(authenticationRequestInfo)
+        );
+    }
+
 
     private MessageInfo createMessageInfo(Long displayableId, String messageDescription, String messageCode) {
         var messageInfo = new MessageInfo();

@@ -6,9 +6,7 @@ import jakarta.persistence.PreUpdate;
 import java.util.Objects;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
 
-@Component
 public class UserEntityListener {
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();

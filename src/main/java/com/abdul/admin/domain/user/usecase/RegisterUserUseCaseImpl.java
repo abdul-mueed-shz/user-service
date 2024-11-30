@@ -15,6 +15,15 @@ public class RegisterUserUseCaseImpl implements RegisterUserUseCase {
 
     @Override
     public UserInfo execute(UserRegistrationRequestInfo userRegistrationRequestInfo) {
+        if ((userRegistrationRequestInfo.getEmail() == null || userRegistrationRequestInfo.getPassword() == null)
+                && userRegistrationRequestInfo.getTwitterUser() == null
+                && userRegistrationRequestInfo.getGoogleUser() == null
+                && userRegistrationRequestInfo.getGithubUser() == null
+                && userRegistrationRequestInfo.getLinkedinUser() == null
+        ) {
+            // Throw new Application Exception.
+            return null;
+        }
         return userRepository.save(userRegistrationRequestInfo);
     }
 }
