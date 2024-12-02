@@ -189,6 +189,20 @@
       <version>0.12.6</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.abdul.toolkit</groupId>
+      <artifactId>security</artifactId>
+      <version>1.0.0</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.abdul.toolkit</groupId>
+      <artifactId>feign</artifactId>
+      <version>1.0.0</version>
+      <scope>compile</scope>
+    </dependency>
+
   </dependencies>
 
   <build>

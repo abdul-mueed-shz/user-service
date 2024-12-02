@@ -1,8 +1,8 @@
 package com.abdul.admin.config;
 
-import com.abdul.admin.domain.auth.port.in.ExtractJwlClaimsUserCase;
-import com.abdul.admin.domain.auth.validator.JwtTokenValidator;
 import com.abdul.admin.domain.user.port.in.GetUserDetailUseCase;
+import com.abdul.toolkit.domain.auth.port.in.ExtractJwtClaimsUseCase;
+import com.abdul.toolkit.domain.auth.validator.JwtTokenValidator;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +23,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final GetUserDetailUseCase getUserDetailUseCase;
-    private final ExtractJwlClaimsUserCase extractJwlClaimsUserCase;
+    private final ExtractJwtClaimsUseCase extractJwtClaimsUseCase;
     private final JwtTokenValidator jwtTokenValidator;
 
     @Override
@@ -38,8 +38,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         jwt = authHeader.substring(7);
-        String tokenType = (String) extractJwlClaimsUserCase.extractTokenType(jwt);
-        userName = extractJwlClaimsUserCase.extractUsername(jwt);
+        String tokenType = (String) extractJwtClaimsUseCase.extractTokenType(jwt);
+        userName = extractJwtClaimsUseCase.extractUsername(jwt);
 
         if (tokenType.equals("access") && Objects.nonNull(userName) && Objects.isNull(
                 SecurityContextHolder.getContext().getAuthentication())) {
