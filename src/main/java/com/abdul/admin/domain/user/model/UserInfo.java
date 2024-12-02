@@ -1,10 +1,10 @@
 package com.abdul.admin.domain.user.model;
 
-import com.abdul.admin.adapter.out.persistence.entity.Role;
-import com.abdul.admin.domain.github.model.GithubUserInfo;
-import com.abdul.admin.domain.google.model.GoogleUserInfo;
-import com.abdul.admin.domain.linkedin.model.LinkedinUserInfo;
-import com.abdul.admin.domain.twitter.model.TwitterUserInfo;
+import com.abdul.toolkit.domain.github.model.GithubUserInfo;
+import com.abdul.toolkit.domain.google.model.GoogleUserInfo;
+import com.abdul.toolkit.domain.linkedin.model.LinkedinUserInfo;
+import com.abdul.toolkit.domain.twitter.model.TwitterUserInfo;
+import com.abdul.toolkit.domain.user.model.RoleInfo;
 import java.time.LocalDateTime;
 import java.util.Set;
 import lombok.AllArgsConstructor;
@@ -23,7 +23,7 @@ public class UserInfo {
     private Long id;
     private String username;
     private String email;
-    private Set<Role> roles;
+    private Set<RoleInfo> roles;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Boolean isActive;

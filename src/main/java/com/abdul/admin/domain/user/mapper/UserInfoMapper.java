@@ -35,7 +35,7 @@ public interface UserInfoMapper {
     @Mapping(source = "googleUserResponse.id", target = "userInfo.googleUser.googleId")
     @Mapping(source = "googleUserResponse.picture", target = "userInfo.googleUser.picture")
     @Mapping(source = "authUserId", target = "userInfo.googleUser.authUserId")
-    @Mapping(target = "userInfo.googleUser.user", ignore = true)
+//    @Mapping(target = "userInfo.googleUser.user", ignore = true)
     UserInfo map(@MappingTarget UserInfo userInfo, GoogleUserResponse googleUserResponse, String authUserId);
 
     @Mapping(target = "id", ignore = true)

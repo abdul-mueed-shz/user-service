@@ -7,7 +7,6 @@ import com.abdul.admin.domain.user.model.UserRegistrationRequestInfo;
 import java.util.List;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
@@ -23,7 +22,7 @@ public interface UserMapper {
 
     User mapUserInfoToUser(UserInfo userInfo);
 
-    @Mapping(target = "googleUser.user", ignore = true)
+    //    @Mapping(target = "googleUser.user", ignore = true)
     UserInfo map(User user);
 
     @AfterMapping
