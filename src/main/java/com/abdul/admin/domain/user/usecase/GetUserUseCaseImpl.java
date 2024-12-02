@@ -1,6 +1,6 @@
 package com.abdul.admin.domain.user.usecase;
 
-import com.abdul.admin.domain.user.model.UserInfo;
+import com.abdul.toolkit.utils.user.model.UserInfo;
 import com.abdul.admin.domain.user.port.in.GetUserUseCase;
 import com.abdul.admin.domain.user.port.out.repository.UserRepository;
 import java.util.List;

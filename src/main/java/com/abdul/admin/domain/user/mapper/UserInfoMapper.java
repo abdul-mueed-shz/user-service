@@ -2,11 +2,11 @@ package com.abdul.admin.domain.user.mapper;
 
 import com.abdul.admin.domain.github.model.GithubUserResponse;
 import com.abdul.admin.domain.google.model.GoogleUserResponse;
-import com.abdul.admin.domain.linkedin.model.LinkedinUserResponse;
 import com.abdul.admin.domain.twitter.model.TwitterAccessTokenResponse;
 import com.abdul.admin.domain.twitter.model.TwitterUserResponse;
 import com.abdul.admin.domain.user.model.AccessToken;
-import com.abdul.admin.domain.user.model.UserInfo;
+import com.abdul.toolkit.utils.linkedin.model.LinkedinUserResponse;
+import com.abdul.toolkit.utils.user.model.UserInfo;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -64,6 +64,7 @@ public interface UserInfoMapper {
     @Mapping(source = "linkedinUserResponse.familyName", target = "userInfo.lastName")
     @Mapping(source = "linkedinUserResponse.givenName", target = "userInfo.firstName")
     @Mapping(target = "id", ignore = true)
-    UserInfo map(@MappingTarget UserInfo userInfo, LinkedinUserResponse linkedinUserResponse, AccessToken accessToken,
+    UserInfo map(@MappingTarget UserInfo userInfo, LinkedinUserResponse linkedinUserResponse,
+            com.abdul.toolkit.utils.model.AccessToken accessToken,
             String state, String authCode);
 }

@@ -3,7 +3,7 @@ package com.abdul.admin.adapter.out.persistence.adapter;
 import com.abdul.admin.adapter.out.persistence.entity.User;
 import com.abdul.admin.adapter.out.persistence.mapper.UserMapper;
 import com.abdul.admin.adapter.out.persistence.repository.UserJpaRepository;
-import com.abdul.admin.domain.user.model.UserInfo;
+import com.abdul.toolkit.utils.user.model.UserInfo;
 import com.abdul.admin.domain.user.model.UserRegistrationRequestInfo;
 import com.abdul.admin.domain.user.port.out.repository.UserRepository;
 import java.util.List;

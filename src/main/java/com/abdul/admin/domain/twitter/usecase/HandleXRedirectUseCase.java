@@ -7,7 +7,7 @@ import com.abdul.admin.domain.twitter.model.TwitterAccessTokenResponse;
 import com.abdul.admin.domain.twitter.model.TwitterUserResponse;
 import com.abdul.admin.domain.twitter.utils.Oauth2Helper;
 import com.abdul.admin.domain.user.mapper.UserInfoMapper;
-import com.abdul.admin.domain.user.model.UserInfo;
+import com.abdul.toolkit.utils.user.model.UserInfo;
 import com.abdul.admin.domain.user.model.UserRegistrationRequestInfo;
 import com.abdul.admin.domain.user.port.in.GetUserDetailUseCase;
 import com.abdul.admin.domain.user.port.in.RegisterUserUseCase;

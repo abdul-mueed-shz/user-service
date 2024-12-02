@@ -1,7 +1,7 @@
 package com.abdul.admin.adapter.out.persistence.mapper;
 
 import com.abdul.admin.adapter.out.persistence.entity.LinkedinUser;
-import com.abdul.toolkit.domain.linkedin.model.LinkedinUserInfo;
+import com.abdul.toolkit.utils.linkedin.model.LinkedinUserInfo;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

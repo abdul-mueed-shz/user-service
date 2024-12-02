@@ -26,6 +26,8 @@ public class SecurityConfig {
                                         "/api/v1/oauth2/google/redirect",
                                         "/api/v1/oauth2/{client}/redirect",
                                         "/api/v1/auth/register",
+                                        "/api/v1/oauth2/{client}/redirect",
+                                        "/api/v1/internal/users/{searchTerm}",
                                         "/api/v1/auth/login")
                                 .permitAll()
                                 .anyRequest()

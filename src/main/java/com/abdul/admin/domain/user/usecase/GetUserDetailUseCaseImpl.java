@@ -1,8 +1,8 @@
 package com.abdul.admin.domain.user.usecase;
 
-import com.abdul.admin.domain.user.model.UserInfo;
 import com.abdul.admin.domain.user.port.in.GetUserDetailUseCase;
 import com.abdul.admin.domain.user.port.out.repository.UserRepository;
+import com.abdul.toolkit.utils.user.model.UserInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,6 +16,7 @@ public class GetUserDetailUseCaseImpl implements GetUserDetailUseCase {
 
     @Override
     public UserInfo get(String searchTerm) {
+        loadUserByUsername(searchTerm);
         return userRepository.findByUsernameOrEmail(searchTerm);
     }
 

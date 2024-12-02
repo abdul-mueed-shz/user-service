@@ -8,7 +8,7 @@ import com.abdul.admin.domain.google.port.in.GetUserProfileUseCase;
 import com.abdul.admin.domain.google.port.in.HandleGoogleOAuthRedirectUseCase;
 import com.abdul.admin.domain.user.mapper.UserInfoMapper;
 import com.abdul.admin.domain.user.model.Oauth2LoginResponse;
-import com.abdul.admin.domain.user.model.UserInfo;
+import com.abdul.toolkit.utils.user.model.UserInfo;
 import com.abdul.admin.domain.user.port.in.RegisterUserUseCase;
 import com.abdul.admin.domain.user.port.in.UpdateUserUseCase;
 import com.abdul.admin.domain.user.port.out.repository.UserRepository;

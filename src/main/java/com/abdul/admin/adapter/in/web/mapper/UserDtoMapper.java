@@ -3,17 +3,17 @@ package com.abdul.admin.adapter.in.web.mapper;
 
 import com.abdul.admin.domain.github.model.GithubUserResponse;
 import com.abdul.admin.domain.google.model.GoogleUserResponse;
-import com.abdul.admin.domain.linkedin.model.LinkedinUserResponse;
 import com.abdul.admin.domain.twitter.model.TwitterAccessTokenResponse;
 import com.abdul.admin.domain.twitter.model.TwitterUserResponse;
 import com.abdul.admin.domain.user.model.AccessToken;
 import com.abdul.admin.domain.user.model.OauthLoginRequest;
-import com.abdul.admin.domain.user.model.UserInfo;
 import com.abdul.admin.domain.user.model.UserRegistrationRequestInfo;
 import com.abdul.admin.dto.Oauth2LoginRequest;
 import com.abdul.admin.dto.Oauth2LoginResponse;
 import com.abdul.admin.dto.RegisterUserRequest;
 import com.abdul.admin.dto.UserResponse;
+import com.abdul.toolkit.utils.linkedin.model.LinkedinUserResponse;
+import com.abdul.toolkit.utils.user.model.UserInfo;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -61,7 +61,7 @@ public interface UserDtoMapper {
     @Mapping(source = "linkedinUserResponse.givenName", target = "firstName")
     UserRegistrationRequestInfo map(
             LinkedinUserResponse linkedinUserResponse,
-            AccessToken accessToken,
+            com.abdul.toolkit.utils.model.AccessToken accessToken,
             String state,
             String authCode);
 

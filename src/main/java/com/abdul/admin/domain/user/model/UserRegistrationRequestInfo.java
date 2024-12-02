@@ -1,11 +1,11 @@
 package com.abdul.admin.domain.user.model;
 
 
-import com.abdul.toolkit.domain.github.model.GithubUserInfo;
-import com.abdul.toolkit.domain.google.model.GoogleUserInfo;
-import com.abdul.toolkit.domain.linkedin.model.LinkedinUserInfo;
-import com.abdul.toolkit.domain.twitter.model.TwitterUserInfo;
-import com.abdul.toolkit.domain.user.model.RoleInfo;
+import com.abdul.toolkit.utils.model.GithubUserInfo;
+import com.abdul.toolkit.utils.model.GoogleUserInfo;
+import com.abdul.toolkit.utils.linkedin.model.LinkedinUserInfo;
+import com.abdul.toolkit.utils.model.TwitterUserInfo;
+import com.abdul.toolkit.utils.user.model.RoleInfo;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

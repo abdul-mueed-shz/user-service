@@ -2,7 +2,7 @@ package com.abdul.admin.adapter.out.persistence.mapper;
 
 
 import com.abdul.admin.adapter.out.persistence.entity.User;
-import com.abdul.admin.domain.user.model.UserInfo;
+import com.abdul.toolkit.utils.user.model.UserInfo;
 import com.abdul.admin.domain.user.model.UserRegistrationRequestInfo;
 import java.util.List;
 import org.mapstruct.AfterMapping;

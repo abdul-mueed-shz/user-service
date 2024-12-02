@@ -2,8 +2,8 @@ package com.abdul.admin.domain.auth.usecase;
 
 import com.abdul.admin.adapter.out.persistence.mapper.UserMapper;
 import com.abdul.admin.domain.auth.port.in.GenerateJwtTokenUseCase;
-import com.abdul.admin.domain.user.model.UserInfo;
-import com.abdul.toolkit.domain.auth.port.in.GetSignInKeyUseCase;
+import com.abdul.toolkit.utils.user.model.UserInfo;
+import com.abdul.toolkit.security.domain.auth.port.in.GetSignInKeyUseCase;
 import io.jsonwebtoken.Jwts;
 import java.util.Date;
 import java.util.HashMap;

@@ -1,7 +1,7 @@
 package com.abdul.admin.domain.user.usecase;
 
 import com.abdul.admin.domain.user.model.Oauth2LoginResponse;
-import com.abdul.admin.domain.user.model.UserInfo;
+import com.abdul.toolkit.utils.user.model.UserInfo;
 import com.twitter.clientlib.ApiException;
 import jakarta.transaction.Transactional;
 import java.io.IOException;
