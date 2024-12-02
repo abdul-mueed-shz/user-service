@@ -11,6 +11,7 @@ import com.abdul.admin.domain.user.model.UserRegistrationRequestInfo;
 import com.abdul.admin.dto.Oauth2LoginRequest;
 import com.abdul.admin.dto.Oauth2LoginResponse;
 import com.abdul.admin.dto.RegisterUserRequest;
+import com.abdul.admin.dto.UserDetailResponse;
 import com.abdul.admin.dto.UserResponse;
 import com.abdul.toolkit.utils.linkedin.model.LinkedinUserResponse;
 import com.abdul.toolkit.utils.user.model.UserInfo;
@@ -90,6 +91,8 @@ public interface UserDtoMapper {
     List<UserResponse> map(List<UserInfo> userInfoList);
 
     UserResponse map(UserInfo userInfo);
+
+    UserDetailResponse mapToUserDetailResponse(UserInfo userInfo);
 
     default OffsetDateTime mapOffsetDateTime(LocalDateTime value) {
         return value != null ? value.atOffset(ZoneOffset.UTC) : null;

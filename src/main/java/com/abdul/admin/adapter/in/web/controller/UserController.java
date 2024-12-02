@@ -3,6 +3,7 @@ package com.abdul.admin.adapter.in.web.controller;
 import com.abdul.admin.adapter.in.web.mapper.UserDtoMapper;
 import com.abdul.admin.domain.user.port.in.GetUserDetailUseCase;
 import com.abdul.admin.domain.user.port.in.GetUserUseCase;
+import com.abdul.admin.dto.UserDetailResponse;
 import com.abdul.admin.dto.UserResponse;
 import com.abdul.toolkit.utils.user.port.in.GetUserDetailServiceUseCase;
 import java.util.List;
@@ -38,9 +39,9 @@ public class UserController {
     }
 
     @GetMapping("/internal/users/{searchTerm}")
-    public ResponseEntity<UserResponse> getUserDetailsInternal(@PathVariable String searchTerm) {
+    public ResponseEntity<UserDetailResponse> getUserDetailsInternal(@PathVariable String searchTerm) {
         return ResponseEntity.ok(
-                userDtoMapper.map(getUserDetailUseCase.get(searchTerm))
+                userDtoMapper.mapToUserDetailResponse(getUserDetailUseCase.get(searchTerm))
         );
     }
 }

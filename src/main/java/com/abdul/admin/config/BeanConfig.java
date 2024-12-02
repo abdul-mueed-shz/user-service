@@ -2,7 +2,6 @@ package com.abdul.admin.config;
 
 import com.abdul.admin.domain.google.datastore.JPADataStoreFactory;
 import com.abdul.admin.domain.google.port.out.repository.GoogleCredentialRepository;
-import com.abdul.admin.domain.user.port.in.GetUserDetailUseCase;
 import com.github.scribejava.apis.GitHubApi;
 import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.core.oauth.OAuth20Service;
@@ -17,12 +16,6 @@ import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -32,26 +25,6 @@ public class BeanConfig {
 
     private final OauthProperties oauthProperties;
     private final GoogleCredentialRepository googleCredentialRepository;
-    private final GetUserDetailUseCase getUserDetailUseCase;
-
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setUserDetailsService(getUserDetailUseCase);
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
-        return daoAuthenticationProvider;
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-            throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
 
     @Bean
     AuthorizationCodeFlow getAuthorizationCodeFlow() throws IOException {
