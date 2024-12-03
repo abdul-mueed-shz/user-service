@@ -16,7 +16,6 @@ public class GetUserDetailUseCaseImpl implements GetUserDetailUseCase {
 
     @Override
     public UserInfo get(String searchTerm) {
-        loadUserByUsername(searchTerm);
         return userRepository.findByUsernameOrEmail(searchTerm);
     }
 

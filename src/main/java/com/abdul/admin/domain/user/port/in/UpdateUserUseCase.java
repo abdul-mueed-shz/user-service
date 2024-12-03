@@ -4,5 +4,5 @@ import com.abdul.toolkit.utils.user.model.UserInfo;
 
 public interface UpdateUserUseCase {
 
-    void execute(UserInfo userInfo);
+    UserInfo execute(UserInfo userInfo);
 }

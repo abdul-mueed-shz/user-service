@@ -2,18 +2,19 @@ package com.abdul.admin.domain.twitter.usecase;
 
 import com.abdul.admin.adapter.in.web.mapper.UserDtoMapper;
 import com.abdul.admin.config.OauthProperties;
+import com.abdul.admin.domain.auth.port.in.AuthenticateUserUseCase;
 import com.abdul.admin.domain.twitter.mapper.TwitterInfoMapper;
 import com.abdul.admin.domain.twitter.model.TwitterAccessTokenResponse;
 import com.abdul.admin.domain.twitter.model.TwitterUserResponse;
 import com.abdul.admin.domain.twitter.utils.Oauth2Helper;
 import com.abdul.admin.domain.user.mapper.UserInfoMapper;
-import com.abdul.toolkit.utils.user.model.UserInfo;
 import com.abdul.admin.domain.user.model.UserRegistrationRequestInfo;
 import com.abdul.admin.domain.user.port.in.GetUserDetailUseCase;
 import com.abdul.admin.domain.user.port.in.RegisterUserUseCase;
 import com.abdul.admin.domain.user.port.in.UpdateUserUseCase;
 import com.abdul.admin.domain.user.port.out.repository.UserRepository;
 import com.abdul.admin.domain.user.usecase.AbstractUserOauthUseCase;
+import com.abdul.toolkit.utils.user.model.UserInfo;
 import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.twitter.clientlib.ApiException;
 import com.twitter.clientlib.TwitterCredentialsOAuth2;
@@ -26,12 +27,10 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.springframework.stereotype.Service;
 
 @Service("twitterRedirect")
-@RequiredArgsConstructor
 public class HandleXRedirectUseCase extends AbstractUserOauthUseCase {
 
     private final Oauth2Helper oauth2Helper;
@@ -45,8 +44,33 @@ public class HandleXRedirectUseCase extends AbstractUserOauthUseCase {
     private final UpdateUserUseCase updateUserUseCase;
     private final TwitterOAuth20Service twitterOAuth20Service;
 
+    public HandleXRedirectUseCase(
+            Oauth2Helper oauth2Helper,
+            OauthProperties oauthProperties,
+            UserRepository userRepository,
+            TwitterInfoMapper twitterInfoMapper,
+            UserDtoMapper userDtoMapper,
+            UserInfoMapper userInfoMapper,
+            RegisterUserUseCase registerUserUseCase,
+            GetUserDetailUseCase getUserDetailUseCase,
+            UpdateUserUseCase updateUserUseCase,
+            TwitterOAuth20Service twitterOAuth20Service,
+            AuthenticateUserUseCase authenticateUserUseCase) {
+        super(authenticateUserUseCase);
+        this.oauth2Helper = oauth2Helper;
+        this.oauthProperties = oauthProperties;
+        this.userRepository = userRepository;
+        this.twitterInfoMapper = twitterInfoMapper;
+        this.userDtoMapper = userDtoMapper;
+        this.userInfoMapper = userInfoMapper;
+        this.registerUserUseCase = registerUserUseCase;
+        this.getUserDetailUseCase = getUserDetailUseCase;
+        this.updateUserUseCase = updateUserUseCase;
+        this.twitterOAuth20Service = twitterOAuth20Service;
+    }
+
     @Override
-    protected void executeTokenValidationFlow(String currentCode, String currentState, UserInfo userInfo)
+    protected UserInfo executeTokenValidationFlow(String currentCode, String currentState, UserInfo userInfo)
             throws ApiException, IOException, ExecutionException, InterruptedException {
         TwitterUserResponse twitterUserResponse;
         String authCode = null;
@@ -68,24 +92,23 @@ public class HandleXRedirectUseCase extends AbstractUserOauthUseCase {
         }
         UserInfo updatedUserInfo = userInfoMapper.map(userInfo, twitterAccessTokenResponse, twitterUserResponse,
                 authCode, state);
-        updateUserUseCase.execute(updatedUserInfo);
+        return updateUserUseCase.execute(updatedUserInfo);
     }
 
     @Override
-    protected void executeAuthCodeFlow(String code, String state)
+    protected UserInfo executeAuthCodeFlow(String code, String state)
             throws ApiException, IOException, ExecutionException, InterruptedException {
         TwitterAccessTokenResponse twitterAccessTokenResponse = getAccessTokenByAuthCode(code);
         TwitterUserResponse twitterUserResponse = fetchTwitterUser(twitterAccessTokenResponse.getAccessToken(),
                 twitterAccessTokenResponse.getRefreshToken());
         UserInfo userInfo = getUserDetailUseCase.get(twitterUserResponse.getUsername());
         if (Objects.nonNull(userInfo)) {
-            updateUserUseCase.execute(
+            return updateUserUseCase.execute(
                     userInfoMapper.map(userInfo, twitterAccessTokenResponse, twitterUserResponse, code, state));
-            return;
         }
         UserRegistrationRequestInfo userRegistrationRequestInfo = userDtoMapper.map(twitterUserResponse,
                 twitterAccessTokenResponse, state, code);
-        registerUserUseCase.execute(userRegistrationRequestInfo);
+        return registerUserUseCase.execute(userRegistrationRequestInfo);
     }
 
     @Override

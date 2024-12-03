@@ -1,5 +1,7 @@
 package com.abdul.admin.domain.user.usecase;
 
+import com.abdul.admin.domain.auth.model.AuthenticationInfo;
+import com.abdul.admin.domain.auth.port.in.AuthenticateUserUseCase;
 import com.abdul.admin.domain.user.model.Oauth2LoginResponse;
 import com.abdul.toolkit.utils.user.model.UserInfo;
 import com.twitter.clientlib.ApiException;
@@ -13,27 +15,30 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public abstract class AbstractUserOauthUseCase {
 
+    private final AuthenticateUserUseCase authenticateUserUseCase;
+
     @Transactional
     public Oauth2LoginResponse execute(String code, String state)
             throws IOException, ExecutionException, InterruptedException, ApiException {
         UserInfo userInfo = getUserByState(state);
         if (Objects.nonNull(userInfo)) {
-            executeTokenValidationFlow(code, state, userInfo);
+            userInfo = executeTokenValidationFlow(code, state, userInfo);
         } else {
-            executeAuthCodeFlow(code, state);
+            userInfo = executeAuthCodeFlow(code, state);
         }
+        AuthenticationInfo authenticationInfo = authenticateUserUseCase.authenticate(userInfo);
         return Oauth2LoginResponse.builder()
-                .accessToken("System Generated")
-                .refreshToken("System Generated")
+                .accessToken(authenticationInfo.getAccessToken())
+                .refreshToken(authenticationInfo.getRefreshToken())
                 .build();
     }
 
     protected abstract UserInfo getUserByState(String state);
 
-    protected abstract void executeTokenValidationFlow(String code, String state, UserInfo userInfo)
+    protected abstract UserInfo executeTokenValidationFlow(String code, String state, UserInfo userInfo)
             throws ApiException, IOException, ExecutionException, InterruptedException;
 
-    protected abstract void executeAuthCodeFlow(String code, String state)
+    protected abstract UserInfo executeAuthCodeFlow(String code, String state)
             throws ApiException, IOException, ExecutionException, InterruptedException;
 
 
