@@ -8,11 +8,6 @@ import com.abdul.admin.domain.twitter.model.TwitterUserResponse;
 import com.abdul.admin.domain.user.model.AccessToken;
 import com.abdul.admin.domain.user.model.OauthLoginRequest;
 import com.abdul.admin.domain.user.model.UserRegistrationRequestInfo;
-import com.abdul.admin.dto.Oauth2LoginRequest;
-import com.abdul.admin.dto.Oauth2LoginResponse;
-import com.abdul.admin.dto.RegisterUserRequest;
-import com.abdul.admin.dto.UserDetailResponse;
-import com.abdul.admin.dto.UserResponse;
 import com.abdul.toolkit.utils.linkedin.model.LinkedinUserResponse;
 import com.abdul.toolkit.utils.user.model.UserInfo;
 import java.time.LocalDateTime;
@@ -29,9 +24,9 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface UserDtoMapper {
 
-    Oauth2LoginResponse map(com.abdul.admin.domain.user.model.Oauth2LoginResponse oauth2LoginResponse);
+    dto.user.Oauth2LoginResponse map(com.abdul.admin.domain.user.model.Oauth2LoginResponse oauth2LoginResponse);
 
-    OauthLoginRequest map(Oauth2LoginRequest oauth2LoginRequest);
+    OauthLoginRequest map(dto.user.Oauth2LoginRequest oauth2LoginRequest);
 
     @Mapping(source = "state", target = "twitterUser.state")
     @Mapping(source = "authCode", target = "twitterUser.usedAuthCode")
@@ -86,13 +81,13 @@ public interface UserDtoMapper {
     @Mapping(source = "accessToken.token", target = "githubUser.accessToken")
     UserRegistrationRequestInfo map(GithubUserResponse githubUserResponse, AccessToken accessToken);
 
-    UserRegistrationRequestInfo map(RegisterUserRequest registerUserRequest);
+    UserRegistrationRequestInfo map(dto.user.RegisterUserRequest registerUserRequest);
 
-    List<UserResponse> map(List<UserInfo> userInfoList);
+    List<dto.user.UserResponse> map(List<UserInfo> userInfoList);
 
-    UserResponse map(UserInfo userInfo);
+    dto.user.UserResponse map(UserInfo userInfo);
 
-    UserDetailResponse mapToUserDetailResponse(UserInfo userInfo);
+    dto.user.UserDetailResponse mapToUserDetailResponse(UserInfo userInfo);
 
     default OffsetDateTime mapOffsetDateTime(LocalDateTime value) {
         return value != null ? value.atOffset(ZoneOffset.UTC) : null;

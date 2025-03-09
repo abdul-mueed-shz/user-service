@@ -10,11 +10,8 @@ import com.abdul.admin.domain.google.port.in.HandleGoogleOAuthRedirectUseCase;
 import com.abdul.admin.domain.user.port.in.RegisterUserUseCase;
 import com.abdul.admin.domain.user.usecase.AbstractGetOAuthUrlUseCase;
 import com.abdul.admin.domain.user.usecase.AbstractUserOauthUseCase;
-import com.abdul.admin.dto.MessageInfo;
-import com.abdul.admin.dto.Oauth2LoginRequest;
-import com.abdul.admin.dto.Oauth2LoginResponse;
-import com.abdul.admin.dto.RegisterUserRequest;
 import com.twitter.clientlib.ApiException;
+import dto.user.MessageInfo;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
@@ -43,7 +40,7 @@ public class AuthController {
     @PostMapping("/oauth2/{client}/login")
     public ResponseEntity<String> oauth2Login(
             @PathVariable("client") String client,
-            @RequestBody Oauth2LoginRequest oauthLoginRequest) throws IOException {
+            @RequestBody dto.user.Oauth2LoginRequest oauthLoginRequest) throws IOException {
         AbstractGetOAuthUrlUseCase abstractGetOAuthUrlUseCase =
                 (AbstractGetOAuthUrlUseCase) applicationContext.getBean(client);
         return ResponseEntity.ok(
@@ -52,7 +49,7 @@ public class AuthController {
     }
 
     @GetMapping("/oauth2/google/redirect")
-    public ResponseEntity<Oauth2LoginResponse> handleGoogleOauthRedirect(
+    public ResponseEntity<dto.user.Oauth2LoginResponse> handleGoogleOauthRedirect(
             GoogleOauthRedirectInfo googleOauthRedirectInfo)
             throws IOException {
         com.abdul.admin.domain.user.model.Oauth2LoginResponse oauth2LoginResponse =
@@ -63,7 +60,7 @@ public class AuthController {
     }
 
     @GetMapping("/oauth2/{client}/redirect")
-    public ResponseEntity<Oauth2LoginResponse> handleOauthRedirect(
+    public ResponseEntity<dto.user.Oauth2LoginResponse> handleOauthRedirect(
             @PathVariable("client") String client,
             @RequestParam(name = "state", required = false) final String state,
             @RequestParam(name = "code", required = false) final String code)
@@ -78,7 +75,7 @@ public class AuthController {
 
     @PostMapping("/auth/register")
     public ResponseEntity<MessageInfo> registerUser(
-            @Valid @RequestBody RegisterUserRequest registerUserRequest) {
+            @Valid @RequestBody dto.user.RegisterUserRequest registerUserRequest) {
         Long userId =
                 registerUserUseCase.execute(userDtoMapper.map(registerUserRequest)).getId();
         return ResponseEntity.ok(

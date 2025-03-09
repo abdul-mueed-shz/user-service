@@ -3,8 +3,6 @@ package com.abdul.admin.adapter.in.web.controller;
 import com.abdul.admin.adapter.in.web.mapper.UserDtoMapper;
 import com.abdul.admin.domain.user.port.in.GetUserDetailUseCase;
 import com.abdul.admin.domain.user.port.in.GetUserUseCase;
-import com.abdul.admin.dto.UserDetailResponse;
-import com.abdul.admin.dto.UserResponse;
 import com.abdul.toolkit.utils.user.port.in.GetUserDetailServiceUseCase;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -26,12 +24,12 @@ public class UserController {
     private final GetUserDetailServiceUseCase getUserDetailServiceUseCase1;
 
     @GetMapping("/users")
-    public ResponseEntity<List<UserResponse>> getUsers() {
+    public ResponseEntity<List<dto.user.UserResponse>> getUsers() {
         return ResponseEntity.ok(userDtoMapper.map(getUserUseCase.findAll()));
     }
 
     @GetMapping("/users/{searchTerm}")
-    public ResponseEntity<UserResponse> getUserDetails(@PathVariable String searchTerm) {
+    public ResponseEntity<dto.user.UserResponse> getUserDetails(@PathVariable String searchTerm) {
         getUserDetailServiceUseCase1.loadUserByUsername(searchTerm);
         return ResponseEntity.ok(
                 userDtoMapper.map(getUserDetailUseCase.get(searchTerm))
@@ -39,7 +37,7 @@ public class UserController {
     }
 
     @GetMapping("/internal/users/{searchTerm}")
-    public ResponseEntity<UserDetailResponse> getUserDetailsInternal(@PathVariable String searchTerm) {
+    public ResponseEntity<dto.user.UserDetailResponse> getUserDetailsInternal(@PathVariable String searchTerm) {
         return ResponseEntity.ok(
                 userDtoMapper.mapToUserDetailResponse(getUserDetailUseCase.get(searchTerm))
         );
