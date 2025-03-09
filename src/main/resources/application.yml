@@ -89,10 +89,8 @@ spring:
     name: user-admin
     client-app-home-url: https://abdulsaasapp.com # Sample url, Replace this with the actual url of the client app.
   datasource:
-    url: ${DATASOURCE.URL}
+    url: ${DATABASE_URL}
     driver-class-name: ${DATASOURCE.DRIVER.CLASS}
-    username: ${DATASOURCE.USERNAME}                # Default H2 username
-    password: ${DATASOURCE.PASSWORD}                # Default H2 password is empty
 
   h2:
     console:
