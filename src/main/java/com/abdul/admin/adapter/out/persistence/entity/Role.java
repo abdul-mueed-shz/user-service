@@ -37,7 +37,7 @@ public class Role implements Serializable {
 
     @ManyToMany
     @JoinTable(
-            name = "role_permissions",
+            name = "role_permission",
             joinColumns = @JoinColumn(name = "role_id"),
             inverseJoinColumns = @JoinColumn(name = "permission_id")
     )

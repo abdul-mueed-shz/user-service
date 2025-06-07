@@ -208,7 +208,16 @@
       <version>1.0.0</version>
       <scope>compile</scope>
     </dependency>
-
+    
+    <dependency>
+      <groupId>org.liquibase</groupId>
+      <artifactId>liquibase-core</artifactId>
+      <version>4.23.2</version> <!-- Use the latest stable version -->
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

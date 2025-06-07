@@ -2,10 +2,11 @@ package com.abdul.admin.adapter.out.persistence.adapter;
 
 import com.abdul.admin.adapter.out.persistence.entity.User;
 import com.abdul.admin.adapter.out.persistence.mapper.UserMapper;
+import com.abdul.admin.adapter.out.persistence.repository.RoleJpaRepository;
 import com.abdul.admin.adapter.out.persistence.repository.UserJpaRepository;
-import com.abdul.toolkit.utils.user.model.UserInfo;
 import com.abdul.admin.domain.user.model.UserRegistrationRequestInfo;
 import com.abdul.admin.domain.user.port.out.repository.UserRepository;
+import com.abdul.toolkit.utils.user.model.UserInfo;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +20,11 @@ public class UserRepositoryAdapter implements UserRepository {
 
     private final UserJpaRepository userJpaRepository;
     private final UserMapper userMapper;
+    private final RoleJpaRepository roleJpaRepository;
 
     @Override
     public UserInfo save(UserRegistrationRequestInfo userRegistrationRequestInfo) {
+        roleJpaRepository.findAll();
         User user = userJpaRepository.save(userMapper.mapRegistrationInfoToUser(userRegistrationRequestInfo));
         return userMapper.map(user);
     }
