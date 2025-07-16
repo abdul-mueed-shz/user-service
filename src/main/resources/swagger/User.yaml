@@ -12,7 +12,7 @@ info:
 servers:
   - url: 'http://localhost:8040'
     description: Development and Testing Server
-  - url: 'http://localhost:8080'
+  - url: 'http://localhost:8081'
     description: Test automation server
   - url: 'http://localhost:8090'
     description: Acceptance server
